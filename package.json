@@ -1,0 +1,11 @@
+{
+  "name": "jadanpay-admin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "JadanPay admin dashboard: customers, plans and bills, providers, brand, staff and roles",
+  "scripts": {
+    "start": "npx --yes serve -l 3000 .",
+    "dev": "npx --yes serve -l 3000 ."
+  },
+  "license": "UNLICENSED"
+}

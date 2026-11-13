@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JadanPay Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1b1b3a;--mut:#6d6a8c;--bg:#f4f5fb;--card:#fff;--line:#e6e7f2;--acc:#6d5efc;--ok:#14915a;--bad:#e11d48;--warn:#b45309}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+h1{font-size:22px;margin:0}
+h2{font-size:16px;margin:0 0 10px}
+.muted{color:var(--mut)}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login .box{width:100%;max-width:380px;background:#fff;border-radius:16px;padding:28px;box-shadow:0 10px 30px #1b1b3a14}
+.brand-l{font-weight:800;font-size:22px;margin-bottom:6px}
+.brand-l span,.brand span{color:#14915a}
+.shell{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+.side{background:var(--ink);color:#fff;padding:18px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;overflow:auto}
+.side .brand{font-weight:800;font-size:18px;padding:6px 10px 16px}
+.nav{background:none;border:0;color:#cfd0ea;text-align:left;padding:10px 12px;border-radius:10px;font-family:inherit;font-size:14px;cursor:pointer}
+.nav:hover{background:#ffffff14}
+.nav.on{background:var(--acc);color:#fff}
+.main{padding:20px 26px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+.end{justify-content:flex-end}
+.grid{display:grid;gap:14px}
+.k4{grid-template-columns:repeat(4,1fr)}
+.k2{grid-template-columns:1fr 1fr}
+@media(max-width:1100px){.k4{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.side{position:relative;height:auto;flex-direction:row;flex-wrap:wrap}.k2{grid-template-columns:1fr}.main{padding:16px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.kpi .l{color:var(--mut);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.kpi .v{font-size:24px;font-weight:800;margin-top:6px}
+.kpi .s{font-size:12px;color:var(--mut);margin-top:4px}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:9px 14px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:var(--bad)}
+.btn:hover{filter:brightness(.97)}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 12px;font-family:inherit;font-weight:600;font-size:12px;color:var(--ink);cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tg{width:48px;height:28px;border-radius:99px;border:0;background:#d6d8e8;position:relative;cursor:pointer;flex:none}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
+.tg.on{background:var(--ok)}
+.tg.on::after{transform:translateX(20px)}
+.tag{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.t-ok{background:#dcfce7;color:#14532d}
+.t-bad{background:#ffe4e6;color:#9f1239}
+.t-warn{background:#fef3c7;color:#78350f}
+.t-info{background:#e0e7ff;color:#312e81}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+tr.click{cursor:pointer}
+tr.click:hover{background:#f7f7fd}
+.scroll{overflow-x:auto}
+.line{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid var(--line)}
+.bars{display:flex;align-items:flex-end;gap:8px;height:160px;margin-bottom:24px}
+.bars div{flex:1;background:linear-gradient(var(--acc),#a5b4fc);border-radius:8px 8px 2px 2px;min-height:4px;position:relative}
+.bars span{position:absolute;bottom:-22px;left:0;right:0;text-align:center;font-size:11px;color:var(--mut)}
+input,select,textarea{font-family:inherit;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:#fff;color:var(--ink);width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid #c7c2ff;border-color:var(--acc)}
+.fld{display:grid;gap:6px;margin:10px 0}
+.fld span{font-size:12px;color:var(--mut);font-weight:600}
+.drawer{position:fixed;inset:0;background:#1b1b3a55;display:none;justify-content:flex-end;z-index:50}
+.drawer.on{display:flex}
+.dr-in{width:min(480px,100%);background:#fff;height:100%;overflow:auto;padding:22px;position:relative}
+.modal{position:fixed;inset:0;background:#1b1b3a66;display:none;place-items:center;z-index:60;padding:20px}
+.modal.on{display:grid}
+.mo-in{background:#fff;border-radius:16px;padding:22px;width:min(420px,100%)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,150%);background:var(--ink);color:#fff;padding:12px 16px;border-radius:12px;transition:transform .3s;z-index:70;max-width:92vw}
+.toast.on{transform:translate(-50%,0)}
+.toast.err{background:var(--bad)}
+.split{display:grid;grid-template-columns:300px 1fr;gap:14px}
+@media(max-width:900px){.split{grid-template-columns:1fr}}
+.it{padding:10px;border-radius:10px;cursor:pointer;border:1px solid transparent;margin-bottom:6px}
+.it.on{border-color:var(--acc);background:#f5f3ff}
+.thread .m{max-width:82%;padding:9px 12px;border-radius:12px;margin:8px 0;background:#f1f2f9}
+.thread .m.agent{margin-left:auto;background:#e0e7ff}
+.prov{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px}
+.danger-zone{border:1px dashed #fecdd3;border-radius:12px;padding:12px}
+.logo-box{width:64px;height:64px;border-radius:14px;border:1px dashed var(--line);display:grid;place-items:center;overflow:hidden;color:var(--mut);font-size:12px}
+.logo-box img{width:100%;height:100%;object-fit:cover}
+.brand-prev{border-radius:16px;padding:20px}
+.bp-btn{padding:8px 14px;border-radius:10px;font-weight:700;color:#1b1b3a;border:2px solid #1b1b3a}
+.secret-note{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px;color:#7c2d12}
+.notice{background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:12px;color:#312e81}
+.catname{font-weight:600}
+/* collapsible sidebar */
+.shell{transition:grid-template-columns .25s}
+.shell.collapsed{grid-template-columns:78px 1fr}
+.shell.collapsed .side{padding:18px 8px;align-items:stretch}
+.shell.collapsed .side .brand{font-size:12px;padding:6px 0 14px;text-align:center}
+.shell.collapsed .lbl,.shell.collapsed .grp{display:none}
+.shell.collapsed .nav{justify-content:center;padding:10px 0}
+.side .nav{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.nav .ic{width:22px;text-align:center;flex:none}
+.grp{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8d8fbf;margin:14px 12px 4px}
+/* permissions and staff */
+.perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:10px}
+.pm{display:flex;gap:8px;align-items:center;font-size:13px}
+.pm input{width:auto}
+@media(max-width:700px){.perm-grid{grid-template-columns:1fr}}
+.avatar-big{width:64px;height:64px;border-radius:20px;background:var(--acc);color:#fff;display:grid;place-items:center;font-weight:800;font-size:22px;flex:none}
+.tmp{font:700 22px ui-monospace,monospace;background:#f1f2f9;border-radius:12px;padding:14px;text-align:center;letter-spacing:.04em;margin:12px 0}
+</style>
+</head>
+<body>
+
+<div id="login" class="login">
+  <div class="box">
+    <div class="brand-l">JADAN<span>PAY</span> Admin</div>
+    <p class="muted">Sign in to manage customers, transactions, services and support.</p>
+    <label class="fld"><span>Email</span><input id="lgEmail" type="email" value="admin@jadanpay.app"></label>
+    <label class="fld"><span>Password</span><input id="lgPass" type="password" placeholder="Enter password"></label>
+    <p id="lgErr" style="color:var(--bad);min-height:20px;margin:6px 0"></p>
+    <button class="btn" style="width:100%" data-act="login">Sign in</button>
+    <p class="muted" style="font-size:12px;margin-top:14px">Demo admin: admin@jadanpay.app · admin123. Change this password before going live.</p>
+  </div>
+</div>
+
+<div id="shell" class="shell" hidden>
+  <aside class="side">
+    <div class="brand">JADAN<span>PAY</span></div>
+    <div id="nav" style="display:flex;flex-direction:column;gap:4px"></div>
+  </aside>
+  <main class="main">
+    <div class="top">
+      <div class="row"><button class="btn ghost" data-act="navToggle" title="Show or hide the menu" aria-label="Toggle menu">☰</button><h1 id="vTitle"></h1><span id="maintBadge" class="tag t-ok">Live</span><span class="muted" id="whoami"></span></div>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<div class="drawer" id="drawer"><div class="dr-in"><button class="btn ghost" style="position:absolute;right:16px;top:16px" data-act="closeDrawer">✕ Close</button><div id="drawerBody" style="margin-top:44px"></div></div></div>
+<div class="modal" id="modal"><div class="mo-in" id="modalBody"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   JadanPay Admin dashboard
+   Data is kept in this browser (localStorage) until a backend
+   is connected in Settings. Every change is written to the audit log.
+   ============================================================ */
+
+const TODAY = new Date('2026-11-12T12:00:00Z');
+const KEY = 'jp_admin_v1';
+const VIEWS = [
+  ['overview','Overview','📊'], ['users','Customers','👥'], ['txs','Transactions','🧾'],
+  ['services','Services & pricing','🛒'], ['network','Network health','📡'], ['support','Support inbox','💬'],
+  ['announce','Announcements','📢'], ['referrals','Referrals','🎁'], ['reports','Reports','📑'],
+  ['audit','Audit log','🕘'], ['catalog','Plans & bills','📦'], ['integrations','Integrations','🔌'], ['brand','Brand','🎨'], ['settings','Settings','⚙️'], ['staff','Staff','👤'], ['roles','Roles & permissions','🛡️'], ['profile','My profile','🙍']
+];
+let VIEW = 'overview', AUTH = false, CUR = null;
+let NAV_COLLAPSED = (() => { try { return localStorage.getItem('jp_admin_nav') === '1'; } catch(e) { return false; } })();
+const UI = {uq:'', uf:'all', tq:'', tt:'all', ts:'all', ticket:null};
+
+const $ = s => document.querySelector(s);
+function rnd(a,b){ return a + Math.floor(Math.random() * (b - a + 1)); }
+function pick(a){ return a[rnd(0, a.length - 1)]; }
+function ago(h){ return new Date(TODAY.getTime() - h * 3600e3).toISOString(); }
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function ngn(n){ return '₦' + Number(n || 0).toLocaleString('en-NG'); }
+function when(iso){ const d = new Date(iso); return d.toLocaleDateString('en-NG',{day:'numeric',month:'short'}) + ' · ' + d.toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit'}); }
+function dayKey(d){ return new Date(d).toISOString().slice(0,10); }
+function refCodeOf(u){ return 'JP-' + u.name.split(' ')[0].toUpperCase().replace(/[^A-Z]/g,'').slice(0,6); }
+function label(k){ return {air:'Airtime', data:'Data', bill:'Bills', send:'Transfers', fund:'Funding'}[k] || k; }
+function badge(s){
+  const map = {success:['t-ok','Successful'], failed:['t-bad','Failed'], refunded:['t-info','Refunded'], open:['t-warn','Open'], resolved:['t-ok','Resolved']};
+  const [c,t] = map[s] || ['t-info', s];
+  return `<span class="tag ${c}">${t}</span>`;
+}
+
+/* ---------- Sample data ---------- */
+function seed(){
+  const names = ['Ada Okafor','Chinedu Obi','Amaka Eze','Tunde Bello','Ngozi Ibe','Musa Lawal','Funke Adeyemi','Emeka Nwosu','Halima Sani','Kemi Oladipo','Ifeanyi Ude','Zainab Yusuf'];
+  const pre = ['0803','0805','0802','0809','0703','0813'];
+  const users = names.map((n,i) => ({
+    id:'U'+(1001+i), name:n,
+    email: i===0 ? 'demo@kwiktop.app' : n.split(' ')[0].toLowerCase()+i+'@mail.com',
+    phone: i===0 ? '08012345678' : pre[i%6] + String(rnd(1000000,9999999)),
+    tier: i%4===0 ? 'Reseller' : 'Basic',
+    wallet: i===0 ? 12450 : rnd(500,25000),
+    earn: rnd(0,3000), refs: rnd(0,6),
+    status: i===7 ? 'suspended' : 'active',
+    pinSet: i!==3, kyc: i%3===0 ? 'verified' : 'none',
+    joined: ago(rnd(3,120)*24), alerts: []
+  }));
+  const txs = Array.from({length:60}, (_,i) => {
+    const type = pick(['air','data','bill','send','fund']), u = pick(users);
+    const amt = pick({air:[100,200,500,1000,2000], data:[200,500,1000,3000], bill:[2000,5000,10000,19000], send:[500,1000,2000,5000], fund:[1000,5000,10000]}[type]);
+    const pr = {air:Math.round(amt*.03), data:Math.round(amt*.1), bill:Math.round(amt*.02), send:0, fund:0}[type];
+    return {ref:'JP'+(500000+i*131).toString(36).toUpperCase(), type, userId:u.id, user:u.name, phone:u.phone,
+            network:pick(['MTN','Airtel','Glo','9mobile']), amt, pr, status: Math.random()<.93 ? 'success' : 'failed', at: ago(rnd(0,24*7))};
+  }).sort((x,y) => y.at.localeCompare(x.at));
+  return {
+    admin:{email:'admin@jadanpay.app', pass:'admin123'},
+    users, txs,
+    plans:[
+      {sz:'500MB',v:'7 days',price:200,cost:176,active:true},
+      {sz:'1.5GB',v:'30 days',price:500,cost:462,active:true},
+      {sz:'3GB',v:'30 days',price:1000,cost:935,active:true},
+      {sz:'10GB',v:'30 days',price:3000,cost:2860,active:true}
+    ],
+    providers:[
+      {svc:'Cable TV',name:'DSTV',active:true},{svc:'Cable TV',name:'GOTV',active:true},{svc:'Cable TV',name:'Startimes',active:true},
+      {svc:'Electricity',name:'Ikeja Electric',active:true},{svc:'Electricity',name:'Eko DisCo',active:true},{svc:'Electricity',name:'Abuja DisCo',active:true},
+      {svc:'Internet',name:'Spectranet',active:true},{svc:'Internet',name:'Smile',active:true},
+      {svc:'More',name:'WAEC PIN',active:true},{svc:'More',name:'NECO PIN',active:true},{svc:'More',name:'Bet9ja',active:true},{svc:'More',name:'SportyBet',active:true}
+    ],
+    networks:[
+      {name:'MTN',rate:97.8,lat:4.1,status:'operational'},{name:'Airtel',rate:94.2,lat:5.3,status:'operational'},
+      {name:'Glo',rate:91.6,lat:6.0,status:'degraded'},{name:'9mobile',rate:88.9,lat:7.4,status:'degraded'}
+    ],
+    tickets:[
+      {id:'T-201',user:'Ada Okafor',subject:'Failed payment',status:'open',msgs:[{from:'user',text:'My airtime was debited but did not arrive.',at:ago(3)},{from:'agent',text:'Sorry about that. Checking now.',at:ago(2)}]},
+      {id:'T-202',user:'Chinedu Obi',subject:'Forgot transaction PIN',status:'open',msgs:[{from:'user',text:'I forgot my transaction PIN. Please help.',at:ago(5)}]},
+      {id:'T-203',user:'Amaka Eze',subject:'Verify wallet',status:'resolved',msgs:[{from:'user',text:'BVN was accepted but no account number appeared.',at:ago(30)},{from:'agent',text:'Fixed. Your account number is now active.',at:ago(28)}]}
+    ],
+    announcements:[{id:'A1',title:'Welcome to JadanPay',body:'Invite friends and earn ₦100 for each one who joins.',audience:'All customers',status:'published',at:ago(48)}],
+    brand:defaultBrand(), integrations:defaultIntegrations(), catalog:defaultCatalog(),
+    roles:defaultRoles(), staff:[ownerFrom(null)],
+    settings:{maintenance:false, showDemo:true, airMargin:3, resellerMargin:5, welcomeBonus:1000, referralBonus:100, pinMaxTries:3, pinLockMins:10, banner:'', bannerOn:false, apiBase:''},
+    audit:[]
+  };
+}
+function load(){
+  try {
+    const s = localStorage.getItem(KEY);
+    if (s) { const d = JSON.parse(s); d.brand = d.brand || defaultBrand(); d.integrations = d.integrations || defaultIntegrations(); d.catalog = (d.catalog || defaultCatalog()).map(normItem);
+    d.roles = d.roles || defaultRoles(); d.staff = d.staff || [ownerFrom(d)]; return d; }
+  } catch(e){}
+  return seed();
+}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch(e){} }
+let DB = load();
+function log(action, detail){
+  DB.audit.unshift({at:new Date().toISOString(), by:(self() ? self().email : 'system'), action, detail});
+  DB.audit = DB.audit.slice(0, 300);
+  save();
+}
+const U = id => DB.users.find(u => u.id === id);
+function defaultBrand(){
+  return {appName:'JadanPay', tagline:'Airtime · Data · Bills', primary:'#ffd23f', accent:'#7ee8a2', ink:'#1b1b3a',
+          supportEmail:'support@jadanpay.app', supportPhone:'', currency:'₦', footer:'Developed by Jadan Tech Solutions Nig Ltd', logo:''};
+}
+function defaultIntegrations(){
+  return {
+    vtu:{enabled:false, provider:'vtpass', baseUrl:'https://sandbox.vtpass.com/api', accountId:'', env:'sandbox', lastTest:''},
+    pay:{enabled:false, provider:'paystack', publicKey:'', callbackUrl:'', env:'test', lastTest:''},
+    smtp:{enabled:false, provider:'smtp', host:'', port:'587', username:'', security:'STARTTLS', fromName:'JadanPay', fromEmail:'no-reply@jadanpay.app', lastTest:''}
+  };
+}
+/* ---------- Plans and bills catalog ----------
+   Each product type has its own fields, as a VTU business needs them:
+   data bundles (plan code, size, validity, bundle type, reseller price),
+   cable TV (package code, duration, smartcard validation),
+   electricity (DisCo, meter type, min and max amount, service fee, meter validation),
+   internet (plan code, size, validity) and other bills (PINs, tokens, wallet top-ups with limits).
+   Plan codes, service IDs and prices come from your vendor. Sample rows are switched off until complete. */
+const CAT_GROUPS = [['data','Data'],['tv','Cable TV'],['power','Electricity'],['internet','Internet'],['other','Other bills']];
+const CAT_FORM = {
+  data:['vendor','network','serviceId','planId','name','size','validity','bundle','cost','price','resellerPrice'],
+  tv:['vendor','network','serviceId','planId','name','validity','cost','price','resellerPrice','validation'],
+  power:['vendor','network','serviceId','planId','name','meter','minAmt','maxAmt','feePct','validation'],
+  internet:['vendor','network','serviceId','planId','name','size','validity','cost','price','resellerPrice'],
+  other:['vendor','network','serviceId','planId','name','unit','minAmt','maxAmt','cost','price']
+};
+const CAT_LABEL = {vendor:'Vendor (primary)', network:'Provider', serviceId:'Vendor service ID', planId:'Plan or product code',
+  name:'Plan or product name', size:'Data size', validity:'Validity', bundle:'Bundle type', cost:'Vendor cost (₦)',
+  price:'Customer price (₦)', resellerPrice:'Reseller price (₦)', meter:'Meter type', minAmt:'Minimum amount (₦)',
+  maxAmt:'Maximum amount (₦)', feePct:'Service fee (%)', validation:'Validate before buying', unit:'Unit'};
+const CAT_OPTS = {vendor:['','VTpass','Peyflex','Clubkonnect','Custom API'], bundle:['','SME','Gifting','Corporate','Normal'],
+  meter:['Prepaid','Postpaid'], validation:['Required','Off'], unit:['','PIN','Token','Top-up','Other']};
+const CAT_MONEY = ['cost','price','resellerPrice','minAmt','maxAmt'];
+function normItem(it){
+  const base = {id:'', group:'data', vendor:'', network:'', serviceId:'', planId:'', name:'', size:'', validity:'', bundle:'',
+    cost:0, price:0, resellerPrice:0, meter:'', minAmt:0, maxAmt:0, feePct:0, validation:'Off', unit:'', active:false, note:'', updated:''};
+  const o = Object.assign({}, base, it);
+  o.serviceId = it.serviceId || it.service || '';
+  delete o.service;
+  ['cost','price','resellerPrice','minAmt','maxAmt','feePct'].forEach(k => o[k] = +o[k] || 0);
+  if (!o.id) o.id = 'C' + Date.now() + Math.floor(Math.random() * 100000);
+  return o;
+}
+function defaultCatalog(){
+  const items = [];
+  const add = o => items.push(normItem(Object.assign({id:'C' + (items.length + 1)}, o)));
+  const data = [['500MB','7 days',176,200],['1.5GB','30 days',462,500],['3GB','30 days',935,1000],['10GB','30 days',2860,3000]];
+  [['MTN','mtn-data'],['Airtel','airtel-data'],['Glo','glo-data'],['9mobile','etisalat-data']].forEach(([net, svc]) =>
+    data.forEach(([sz, val, c, p]) => add({group:'data', network:net, serviceId:svc, name:sz + ' · ' + val, size:sz, validity:val,
+      bundle:'SME', cost:c, price:p, resellerPrice:Math.round(p * 0.97), note:'Sample price. Enter the plan code from your vendor.'})));
+  [['DSTV','dstv',['Padi','Yanga','Confam','Compact','Compact Plus','Premium']],
+   ['GOTV','gotv',['Smallie','Jinja','Jolli','Max']],
+   ['Startimes','startimes',['Nova','Basic','Smart','Classic']]].forEach(([net, svc, pk]) =>
+    pk.forEach(p => add({group:'tv', network:net, serviceId:svc, name:p, validity:'1 month', validation:'Required',
+      note:'Enter the package code and prices from your vendor.'})));
+  [['Ikeja Electric','ikeja-electric'],['Eko DisCo','eko-electric'],['Abuja DisCo','abuja-electric']].forEach(([net, svc]) =>
+    add({group:'power', network:net, serviceId:svc, name:'Prepaid electricity', meter:'Prepaid', minAmt:1000, maxAmt:100000, feePct:0,
+      validation:'Required', note:'Set your limits and service fee. Meter validation runs before payment.'}));
+  [['Spectranet','spectranet','10GB monthly'],['Smile','smile-direct','20GB monthly']].forEach(([net, svc, p]) =>
+    add({group:'internet', network:net, serviceId:svc, name:p, size:p.split(' ')[0], validity:'1 month', note:'Enter the plan code and prices.'}));
+  add({group:'other', network:'WAEC', serviceId:'waec', name:'Result checker PIN', unit:'PIN', note:'Enter the product code and prices.'});
+  add({group:'other', network:'NECO', serviceId:'neco', name:'Result checker token', unit:'Token', note:'Enter the product code and prices.'});
+  add({group:'other', network:'Bet9ja', serviceId:'bet9ja', planId:'variable', name:'Wallet top-up (any amount)', unit:'Top-up', minAmt:100, maxAmt:500000, note:'Set the top-up limits.'});
+  add({group:'other', network:'SportyBet', serviceId:'sportybet', planId:'variable', name:'Wallet top-up (any amount)', unit:'Top-up', minAmt:100, maxAmt:500000, note:'Set the top-up limits.'});
+  return items;
+}
+const PROVIDERS = {
+  vtu:[['vtpass','VTpass'],['peyflex','Peyflex'],['clubkonnect','Clubkonnect'],['custom','Custom API']],
+  pay:[['paystack','Paystack'],['flutterwave','Flutterwave'],['monnify','Monnify'],['interswitch','Interswitch'],['custom','Custom']],
+  smtp:[['smtp','SMTP server'],['sendgrid','SendGrid (SMTP)'],['mailgun','Mailgun (SMTP)'],['ses','Amazon SES (SMTP)']]
+};
+const INTEG_SECRETS = {vtu:['apiKey','secretKey'], pay:['secretKey'], smtp:['password']};
+const INTEG_PLAIN = {
+  vtu:[['baseUrl','Provider API base URL'],['accountId','Account ID or username'],['env','Environment (sandbox or live)']],
+  pay:[['publicKey','Public key'],['callbackUrl','Callback URL (optional)'],['env','Environment (test or live)']],
+  smtp:[['host','SMTP host'],['port','Port'],['username','Username'],['security','Security (STARTTLS or SSL)'],['fromName','Sender name'],['fromEmail','Sender email']]
+};
+const SECRET_LABEL = {apiKey:'API key', secretKey:'Secret key', password:'SMTP password'};
+
+/* ---------- UI helpers ---------- */
+function toast(msg, type='ok'){
+  const t = $('#toast'); t.textContent = msg; t.className = 'toast on ' + (type==='err' ? 'err' : '');
+  clearTimeout(window._tt); window._tt = setTimeout(() => t.classList.remove('on'), 2800);
+}
+function openDrawer(html){ $('#drawerBody').innerHTML = html; $('#drawer').classList.add('on'); }
+function closeDrawer(){ $('#drawer').classList.remove('on'); }
+function closeModal(){ $('#modal').classList.remove('on'); }
+function openForm(title, fields, submitLabel, onSubmit, note){
+  $('#modalBody').innerHTML = `<h2>${esc(title)}</h2>${note ? `<p class="muted">${esc(note)}</p>` : ''}` +
+    fields.map(f => `<label class="fld"><span>${esc(f.label)}</span><input id="f_${f.id}" type="${f.type||'text'}" placeholder="${esc(f.ph||'')}"></label>`).join('') +
+    `<div class="row end" style="margin-top:14px"><button class="btn ghost" data-act="closeModal">Cancel</button><button class="btn" id="fSubmit">${esc(submitLabel)}</button></div>`;
+  $('#modal').classList.add('on');
+  $('#fSubmit').onclick = () => {
+    const vals = {}; fields.forEach(f => vals[f.id] = $('#f_' + f.id).value.trim());
+    const err = onSubmit(vals);
+    if (err) toast(err, 'err'); else closeModal();
+  };
+}
+function csv(name, rows){
+  if (!rows.length) return toast('Nothing to export', 'err');
+  const cols = Object.keys(rows[0]);
+  const body = [cols.join(','), ...rows.map(r => cols.map(c => `"${String(r[c] ?? '').replace(/"/g,'""')}"`).join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([body], {type:'text/csv'}));
+  a.download = name + '.csv'; document.body.appendChild(a); a.click(); a.remove();
+  log('export', name); toast(name + '.csv downloaded');
+}
+const kpi = (l, v, s) => `<div class="card kpi"><div class="l">${esc(l)}</div><div class="v">${v}</div><div class="s">${esc(s)}</div></div>`;
+const txLine = t => `<div class="line"><b>${label(t.type)}</b><span>${ngn(t.amt)}</span><span class="muted">${esc(t.user)}</span>${badge(t.status)}<span class="muted" style="margin-left:auto">${when(t.at)}</span></div>`;
+
+/* ---------- Filters ---------- */
+function filteredUsers(){
+  const q = UI.uq.toLowerCase();
+  return DB.users.filter(u => {
+    const okF = {all:true, active:u.status==='active', suspended:u.status==='suspended', reseller:u.tier==='Reseller', nopin:!u.pinSet}[UI.uf];
+    const okQ = !q || [u.name,u.email,u.phone].some(x => String(x).toLowerCase().includes(q));
+    return okF && okQ;
+  });
+}
+function filteredTx(){
+  const q = UI.tq.toLowerCase();
+  return DB.txs.filter(t => (UI.tt==='all' || t.type===UI.tt) && (UI.ts==='all' || t.status===UI.ts) &&
+    (!q || [t.ref,t.user,t.phone].some(x => String(x).toLowerCase().includes(q))));
+}
+
+/* ---------- Actions ---------- */
+function openUser(id){
+  const u = U(id); if (!u) return;
+  const mine = DB.txs.filter(t => t.userId === id).slice(0, 6);
+  openDrawer(`
+    <div class="row between"><h2>${esc(u.name)}</h2><span class="tag ${u.status==='active'?'t-ok':'t-bad'}">${u.status==='active'?'Active':'Suspended'}</span></div>
+    <p class="muted">${esc(u.email)} · ${esc(u.phone)}</p>
+    <div class="grid k2" style="margin:14px 0">
+      <div class="card"><div class="muted">Wallet</div><b>${ngn(u.wallet)}</b></div>
+      <div class="card"><div class="muted">Earnings</div><b>${ngn(u.earn)}</b></div>
+      <div class="card"><div class="muted">Tier</div><b>${u.tier}</b></div>
+      <div class="card"><div class="muted">Referrals</div><b>${u.refs||0}</b></div>
+    </div>
+    <div class="row" style="gap:8px;margin-bottom:16px">
+      <button class="btn" data-act="uWallet" data-id="${u.id}" data-v="credit">Credit wallet</button>
+      <button class="btn ghost" data-act="uWallet" data-id="${u.id}" data-v="debit">Debit wallet</button>
+      <button class="btn ghost" data-act="uTier" data-id="${u.id}">${u.tier==='Reseller'?'Make Basic':'Make Reseller'}</button>
+      <button class="btn ghost" data-act="uSuspend" data-id="${u.id}">${u.status==='active'?'Suspend':'Activate'}</button>
+      <button class="btn ghost" data-act="uResetPin" data-id="${u.id}">Reset PIN</button>
+      <button class="btn ghost" data-act="uNotify" data-id="${u.id}">Send alert</button>
+    </div>
+    <h2>Recent transactions</h2>
+    ${mine.length ? `<table><tbody>${mine.map(t => `<tr><td>${when(t.at)}</td><td>${label(t.type)}</td><td>${ngn(t.amt)}</td><td>${badge(t.status)}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">No transactions yet.</p>'}
+    <h2 style="margin-top:18px">Alerts sent</h2>
+    ${u.alerts.length ? u.alerts.map(a => `<div class="line"><span>${esc(a.text)}</span><span class="muted" style="margin-left:auto">${when(a.at)}</span></div>`).join('') : '<p class="muted">None.</p>'}
+  `);
+}
+function openTx(id){
+  const t = DB.txs.find(x => x.ref === id); if (!t) return;
+  openDrawer(`
+    <h2>${label(t.type)} · ${ngn(t.amt)}</h2>
+    <div style="margin:10px 0">${badge(t.status)}</div>
+    ${[['Reference',t.ref],['Customer',t.user],['Phone',t.phone],['Network',t.network],['Amount',ngn(t.amt)],['Your profit',ngn(t.pr)],['Date and time',when(t.at)]]
+       .map(([a,b]) => `<div class="line"><span class="muted" style="width:130px">${a}</span><b>${esc(b)}</b></div>`).join('')}
+    <div class="row" style="margin-top:16px">
+      ${t.status==='success' && t.type!=='fund' ? `<button class="btn danger" data-act="txRefund" data-id="${t.ref}">Refund to wallet</button>` : ''}
+      <button class="btn ghost" data-act="openUser" data-id="${t.userId}">View customer</button>
+    </div>`);
+}
+
+async function doLogin(){
+  const e = $('#lgEmail').value.trim().toLowerCase(), p = $('#lgPass').value;
+  const st = DB.staff.find(x => x.email === e);
+  const ok = st && (st.hash ? (await hashP(p, st.salt)) === st.hash : st && st.pass === p);
+  if (!ok) { $('#lgErr').textContent = 'Wrong email or password.'; return; }
+  if (st.status !== 'active') { $('#lgErr').textContent = 'This account is suspended. Ask the owner to reactivate it.'; return; }
+  CUR = st.id; AUTH = true; st.lastLogin = new Date().toISOString(); save(); log('login', st.email);
+  VIEW = canView(VIEW) ? VIEW : (VIEWS.find(v => canView(v[0])) || ['profile'])[0];
+  if (st.mustChange) { VIEW = 'profile'; toast('Please change your temporary password'); }
+  render();
+}
+
+function act(name, el){
+  const need = ACT_PERM[name];
+  if (need && !can(need)) return toast('Your role does not allow this action', 'err');
+  const id = el.dataset.id, i = +el.dataset.i, v = el.dataset.v;
+  switch(name){
+    case 'login': return doLogin();
+    case 'logout': AUTH = false; CUR = null; return render();
+    case 'navToggle': NAV_COLLAPSED = !NAV_COLLAPSED; try { localStorage.setItem('jp_admin_nav', NAV_COLLAPSED ? '1' : '0'); } catch(e) {} return render();
+    case 'staffAdd': return openStaffForm(null);
+    case 'staffEdit': return openStaffForm(DB.staff.find(x => x.id === id));
+    case 'staffToggle': return toggleStaff(id);
+    case 'staffReset': return resetStaff(id);
+    case 'staffDel': return deleteStaff(id);
+    case 'roleAdd': return openRoleForm(null);
+    case 'roleEdit': return openRoleForm(DB.roles.find(x => x.id === id));
+    case 'roleDel': return deleteRole(id);
+    case 'profSave': return saveProfile();
+    case 'profPass': return changeOwnPassword();
+    case 'closeDrawer': return closeDrawer();
+    case 'closeModal': return closeModal();
+    case 'openUser': return openUser(id);
+    case 'openTx': return openTx(id);
+    case 'setUF': UI.uf = v; return render();
+    case 'setTT': UI.tt = v; return render();
+    case 'setTS': UI.ts = v; return render();
+    case 'selTicket': UI.ticket = id; return render();
+
+    case 'uSuspend': { const u = U(id); u.status = u.status==='active' ? 'suspended' : 'active'; save(); log('customer.status', `${u.name} → ${u.status}`); toast(`${u.name} is now ${u.status}`); openUser(id); return render(); }
+    case 'uTier': { const u = U(id); u.tier = u.tier==='Reseller' ? 'Basic' : 'Reseller'; save(); log('customer.tier', `${u.name} → ${u.tier}`); toast(`${u.name} is now ${u.tier}`); openUser(id); return render(); }
+    case 'uWallet': {
+      const u = U(id);
+      openForm(`${v==='credit' ? 'Credit' : 'Debit'} wallet · ${u.name}`, [{id:'amt', label:'Amount (₦)', type:'number', ph:'e.g. 1000'}, {id:'why', label:'Reason (required, for the audit log)'}], 'Confirm', vals => {
+        const amt = +vals.amt;
+        if (!(amt > 0)) return 'Enter a valid amount.';
+        if (!vals.why) return 'A reason is required.';
+        if (v==='debit' && amt > u.wallet) return 'That is more than the wallet balance.';
+        u.wallet += v==='credit' ? amt : -amt;
+        save(); log('customer.wallet', `${v} ${ngn(amt)} for ${u.name}: ${vals.why}`);
+        toast(`${v==='credit' ? 'Credited' : 'Debited'} ${ngn(amt)}`); openUser(id); render();
+      });
+      return;
+    }
+    case 'uResetPin': {
+      const u = U(id);
+      openForm('Reset transaction PIN · ' + u.name, [{id:'why', label:'Reason (required)', ph:'e.g. identity confirmed by phone'}], 'Reset PIN', vals => {
+        if (!vals.why) return 'A reason is required.';
+        u.pinSet = false; save(); log('customer.pinReset', `${u.name}: ${vals.why}`);
+        toast('PIN cleared. The customer creates a new one next time.'); openUser(id); render();
+      }, 'The customer must create a new PIN before their next transaction.');
+      return;
+    }
+    case 'uNotify': {
+      const u = U(id);
+      openForm('Send alert to ' + u.name, [{id:'msg', label:'Message'}], 'Send alert', vals => {
+        if (!vals.msg) return 'Write a message first.';
+        u.alerts.unshift({text:vals.msg, at:new Date().toISOString()}); save(); log('customer.alert', `${u.name}: ${vals.msg}`);
+        toast('Alert sent to ' + u.name); openUser(id); render();
+      });
+      return;
+    }
+    case 'txRefund': {
+      const t = DB.txs.find(x => x.ref === id);
+      if (t.status !== 'success') return toast('Only successful transactions can be refunded', 'err');
+      openForm('Refund ' + t.ref, [{id:'why', label:'Reason (required)'}], 'Refund to wallet', vals => {
+        if (!vals.why) return 'A reason is required.';
+        const u = U(t.userId); u.wallet += t.amt; t.status = 'refunded';
+        save(); log('transaction.refund', `${t.ref} ${ngn(t.amt)} to ${u.name}: ${vals.why}`);
+        toast('Refunded to wallet'); openTx(t.ref); render();
+      });
+      return;
+    }
+
+    case 'exportUsers': return csv('customers', DB.users.map(u => ({id:u.id, name:u.name, email:u.email, phone:u.phone, tier:u.tier, wallet:u.wallet, earnings:u.earn, status:u.status, joined:u.joined})));
+    case 'exportTxs': return csv('transactions', filteredTx().map(t => ({ref:t.ref, type:label(t.type), customer:t.user, phone:t.phone, network:t.network, amount:t.amt, profit:t.pr, status:t.status, at:t.at})));
+    case 'exportTickets': return csv('support-tickets', DB.tickets.map(t => ({id:t.id, customer:t.user, subject:t.subject, status:t.status, messages:t.msgs.length})));
+    case 'exportAudit': return csv('audit-log', DB.audit.map(a => ({at:a.at, by:a.by, action:a.action, detail:a.detail})));
+
+    case 'togglePlan': { const p = DB.plans[i]; p.active = !p.active; save(); log('service.plan', `${p.sz} ${p.active?'on':'off'}`); return render(); }
+    case 'toggleProv': { const p = DB.providers[i]; p.active = !p.active; save(); log('service.provider', `${p.name} ${p.active?'enabled':'disabled'}`); toast(`${p.name} ${p.active?'enabled':'disabled'}`); return render(); }
+    case 'toggleSetting': { const k = el.dataset.k; DB.settings[k] = !DB.settings[k]; save(); log('setting', `${k} → ${DB.settings[k]}`); toast('Saved'); return render(); }
+
+    case 'annSave': {
+      const title = $('#aTitle').value.trim(), body = $('#aBody').value.trim();
+      if (!title || !body) return toast('Add a title and a message', 'err');
+      const status = $('#aStatus').value;
+      DB.announcements.unshift({id:'A'+Date.now(), title, body, audience:$('#aAud').value, status, at:new Date().toISOString()});
+      save(); log('announcement.create', `${title} (${status})`);
+      toast(status==='published' ? 'Announcement published' : 'Saved as draft'); return render();
+    }
+    case 'annToggle': { const a = DB.announcements.find(x => x.id === id); a.status = a.status==='published' ? 'draft' : 'published'; save(); log('announcement.toggle', `${a.title} → ${a.status}`); return render(); }
+    case 'annDel': { DB.announcements = DB.announcements.filter(x => x.id !== id); save(); log('announcement.delete', id); return render(); }
+
+    case 'quick': { const r = $('#replyTxt'); if (r) r.value = el.dataset.text; return; }
+    case 'reply': {
+      const tk = DB.tickets.find(x => x.id === UI.ticket), txt = $('#replyTxt').value.trim();
+      if (!txt) return toast('Write a reply first', 'err');
+      tk.msgs.push({from:'agent', text:txt, at:new Date().toISOString()}); save(); log('support.reply', tk.id);
+      toast('Reply sent'); return render();
+    }
+    case 'resolve': { const tk = DB.tickets.find(x => x.id === id); tk.status = tk.status==='open' ? 'resolved' : 'open'; save(); log('support.status', `${tk.id} → ${tk.status}`); return render(); }
+
+    case 'toggleInteg': { const kind = el.dataset.kind; DB.integrations[kind].enabled = !DB.integrations[kind].enabled; save(); log('integration.toggle', kind + ' ' + (DB.integrations[kind].enabled ? 'on' : 'off')); return render(); }
+    case 'saveInteg': return saveInteg(el.dataset.kind);
+    case 'testInteg': return testInteg(el.dataset.kind);
+    case 'pickLogo': return $('#brandLogo').click();
+    case 'removeLogo': { DB.brand.logo = ''; save(); log('brand.logo', 'removed'); return render(); }
+    case 'exportBrand': {
+      const cfg = {brand: DB.brand, integrations: Object.fromEntries(Object.keys(DB.integrations).map(k => [k, pickPlain(DB.integrations[k])]))};
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(cfg, null, 2)], {type:'application/json'}));
+      a.download = 'jadanpay-brand-config.json'; document.body.appendChild(a); a.click(); a.remove();
+      return toast('Brand config downloaded (no secret keys included)');
+    }
+    case 'setCat': UI.cat = v; return render();
+    case 'catAdd': return openCatForm(null);
+    case 'catEdit': return openCatForm(DB.catalog.find(x => x.id === id));
+    case 'catToggle': {
+      const it = DB.catalog.find(x => x.id === id);
+      if (!it.active && !catReady(it)) return toast('Complete this item first: ' + catStatus(it).replace(/<[^>]+>/g, '').toLowerCase(), 'err');
+      it.active = !it.active; save(); log('catalog.toggle', `${it.network} ${it.name} ${it.active ? 'live' : 'off'}`); return render();
+    }
+    case 'catDel': {
+      const it = DB.catalog.find(x => x.id === id);
+      openForm('Delete item', [{id:'c', label:'Type DELETE to confirm'}], 'Delete', vals => {
+        if (vals.c !== 'DELETE') return 'Type DELETE exactly.';
+        DB.catalog = DB.catalog.filter(x => x.id !== id); save(); log('catalog.delete', `${it.network} ${it.name}`);
+        toast('Item deleted'); render();
+      });
+      return;
+    }
+    case 'catImport': return openImport();
+    case 'catImportRun': return runImport();
+    case 'catExport': return csv('catalog', DB.catalog.map(catRow));
+    case 'catTemplate': return csv('catalog-template', ['data','tv','power','internet','other'].map(g => catRow(normItem({group:g}))));
+    case 'backup': {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(DB, null, 2)], {type:'application/json'}));
+      a.download = 'jadanpay-admin-backup.json'; document.body.appendChild(a); a.click(); a.remove();
+      log('data.backup', 'downloaded'); return toast('Backup downloaded');
+    }
+    case 'restore': return $('#restoreFile').click();
+    case 'resetData': {
+      openForm('Reset all data', [{id:'c', label:'Type RESET to confirm'}], 'Reset everything', vals => {
+        if (vals.c !== 'RESET') return 'Type RESET exactly.';
+        DB = seed(); save(); log('data.reset', 'all sample data'); toast('Data reset'); render();
+      }, 'This clears every change made in this dashboard.');
+      return;
+    }
+  }
+}
+
+/* ---------- Views ---------- */
+function viewOverview(){
+  const today = dayKey(TODAY);
+  const tday = DB.txs.filter(t => dayKey(t.at) === today);
+  const ok = DB.txs.filter(t => t.status === 'success');
+  const vol = ok.reduce((s,t) => s + t.amt, 0), profit = ok.reduce((s,t) => s + t.pr, 0);
+  const float = DB.users.reduce((s,u) => s + u.wallet, 0);
+  const open = DB.tickets.filter(t => t.status === 'open').length;
+  const rate = DB.txs.length ? (ok.length / DB.txs.length * 100).toFixed(1) : '0';
+  const days = [...Array(7)].map((_,i) => {
+    const d = new Date(TODAY.getTime() - (6 - i) * 864e5), k = dayKey(d);
+    return {label:d.toLocaleDateString('en-NG',{weekday:'short'}), v: ok.filter(t => dayKey(t.at) === k).reduce((s,t) => s + t.amt, 0)};
+  });
+  const max = Math.max(1, ...days.map(d => d.v));
+  const mix = ['air','data','bill','send','fund'].map(k => ({k, c: DB.txs.filter(t => t.type === k).length}));
+  const mixMax = Math.max(1, ...mix.map(m => m.c));
+  const todayOk = tday.filter(t => t.status==='success').reduce((s,t) => s + t.amt, 0);
+  return `
+  <div class="grid k4">
+    ${kpi('Customers', DB.users.length, DB.users.filter(u => u.status==='active').length + ' active')}
+    ${kpi('Today', tday.length + ' transactions', ngn(todayOk) + ' volume')}
+    ${kpi('Profit (all time)', ngn(profit), 'from sales and margins')}
+    ${kpi('Wallet float', ngn(float), 'held for customers')}
+  </div>
+  <div class="grid k4" style="margin-top:14px">
+    ${kpi('Success rate', rate + '%', (DB.txs.length - ok.length) + ' failed or refunded')}
+    ${kpi('Open tickets', open, 'support inbox')}
+    ${kpi('Volume (all time)', ngn(vol), 'successful payments')}
+    ${kpi('App status', DB.settings.maintenance ? 'Maintenance' : 'Live', DB.settings.maintenance ? 'Customers see a notice' : 'Running normally')}
+  </div>
+  <div class="grid k2" style="margin-top:14px">
+    <div class="card"><h2>Volume, last 7 days</h2>
+      <div class="bars">${days.map(d => `<div style="height:${Math.max(4, d.v / max * 100)}%"><span>${d.label}</span></div>`).join('')}</div></div>
+    <div class="card"><h2>Service mix</h2>
+      ${mix.map(m => `<div class="row" style="margin:12px 0"><span style="width:90px">${label(m.k)}</span><div style="flex:1;background:#eef0fb;border-radius:8px;height:12px"><div style="width:${m.c/mixMax*100}%;height:12px;background:var(--acc);border-radius:8px"></div></div><b>${m.c}</b></div>`).join('')}</div>
+  </div>
+  <div class="grid k2" style="margin-top:14px">
+    <div class="card"><h2>Recent transactions</h2>${DB.txs.slice(0,6).map(txLine).join('')}</div>
+    <div class="card"><h2>Admin activity</h2>${DB.audit.slice(0,6).map(a => `<div class="line"><b>${esc(a.action)}</b><span class="muted">${esc(a.detail)}</span><span class="muted" style="margin-left:auto">${when(a.at)}</span></div>`).join('') || '<p class="muted">No activity yet.</p>'}</div>
+  </div>`;
+}
+
+function viewUsers(){
+  const rows = filteredUsers();
+  return `<div class="card">
+    <div class="row between" style="margin-bottom:12px">
+      <div class="row">${[['all','All'],['active','Active'],['suspended','Suspended'],['reseller','Resellers'],['nopin','No PIN']].map(([k,l]) => `<button class="chip ${UI.uf===k?'on':''}" data-act="setUF" data-v="${k}">${l}</button>`).join('')}</div>
+      <div class="row"><input data-field="uq" value="${esc(UI.uq)}" placeholder="Search name, email or phone" style="width:260px"><button class="btn ghost" data-act="exportUsers">Export CSV</button></div>
+    </div>
+    <div class="scroll"><table><thead><tr><th>Customer</th><th>Phone</th><th>Tier</th><th>Wallet</th><th>Status</th><th>Joined</th></tr></thead><tbody>
+      ${rows.map(u => `<tr class="click" data-act="openUser" data-id="${u.id}">
+        <td><b>${esc(u.name)}</b><div class="muted">${esc(u.email)}</div></td><td>${esc(u.phone)}</td><td>${u.tier}</td>
+        <td>${ngn(u.wallet)}</td><td>${u.status==='active' ? '<span class="tag t-ok">Active</span>' : '<span class="tag t-bad">Suspended</span>'}</td><td>${when(u.joined)}</td></tr>`).join('') || '<tr><td colspan="6" class="muted">No customers match.</td></tr>'}
+    </tbody></table></div></div>`;
+}
+
+function viewTxs(){
+  const rows = filteredTx();
+  return `<div class="card">
+    <div class="row between" style="margin-bottom:12px;flex-wrap:wrap">
+      <div class="row">${[['all','All'],['air','Airtime'],['data','Data'],['bill','Bills'],['send','Transfers'],['fund','Funding']].map(([k,l]) => `<button class="chip ${UI.tt===k?'on':''}" data-act="setTT" data-v="${k}">${l}</button>`).join('')}</div>
+      <div class="row">${[['all','Any status'],['success','Successful'],['failed','Failed'],['refunded','Refunded']].map(([k,l]) => `<button class="chip ${UI.ts===k?'on':''}" data-act="setTS" data-v="${k}">${l}</button>`).join('')}</div>
+    </div>
+    <div class="row between" style="margin-bottom:12px">
+      <input data-field="tq" value="${esc(UI.tq)}" placeholder="Search reference, customer or phone" style="width:320px">
+      <button class="btn ghost" data-act="exportTxs">Export CSV</button>
+    </div>
+    <div class="scroll"><table><thead><tr><th>Reference</th><th>Type</th><th>Customer</th><th>Amount</th><th>Profit</th><th>Status</th><th>When</th></tr></thead><tbody>
+      ${rows.slice(0,200).map(t => `<tr class="click" data-act="openTx" data-id="${t.ref}"><td><b>${t.ref}</b></td><td>${label(t.type)}</td><td>${esc(t.user)}</td><td>${ngn(t.amt)}</td><td>${ngn(t.pr)}</td><td>${badge(t.status)}</td><td>${when(t.at)}</td></tr>`).join('') || '<tr><td colspan="7" class="muted">No transactions match.</td></tr>'}
+    </tbody></table></div>
+    <p class="muted" style="margin-top:10px">Showing ${Math.min(rows.length,200)} of ${rows.length}.</p></div>`;
+}
+
+function viewServices(){
+  const s = DB.settings;
+  return `
+  <div class="grid k2">
+    <div class="card"><h2>Data plans: price and your cost</h2>
+      <p class="muted">Changes apply to new purchases once the app reads prices from the backend.</p>
+      <div class="scroll"><table><thead><tr><th>Size</th><th>Validity</th><th>Price (₦)</th><th>Cost (₦)</th><th>Profit</th><th>On</th></tr></thead><tbody>
+      ${DB.plans.map((p,i) => `<tr><td><b>${p.sz}</b></td><td>${p.v}</td>
+        <td><input type="number" data-field="plan" data-i="${i}" data-k="price" value="${p.price}" style="width:110px"></td>
+        <td><input type="number" data-field="plan" data-i="${i}" data-k="cost" value="${p.cost}" style="width:110px"></td>
+        <td>${ngn(p.price-p.cost)}</td>
+        <td><button class="tg ${p.active?'on':''}" data-act="togglePlan" data-i="${i}" aria-label="Toggle plan"></button></td></tr>`).join('')}
+      </tbody></table></div></div>
+    <div class="card"><h2>Airtime margins</h2>
+      <label class="fld"><span>Margin for customers (%)</span><input type="number" data-field="setting" data-k="airMargin" value="${s.airMargin}"></label>
+      <label class="fld"><span>Margin for Resellers (%)</span><input type="number" data-field="setting" data-k="resellerMargin" value="${s.resellerMargin}"></label>
+      <p class="muted">The app currently uses 3% and 5%. These values apply to new airtime sales.</p></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h2>Bill providers</h2>
+    <div class="grid k4">${DB.providers.map((p,i) => `<div class="prov"><div><b>${esc(p.name)}</b><div class="muted">${esc(p.svc)}</div></div><button class="tg ${p.active?'on':''}" data-act="toggleProv" data-i="${i}" aria-label="Toggle provider"></button></div>`).join('')}</div></div>`;
+}
+
+function viewNetwork(){
+  const s = DB.settings;
+  return `
+  <div class="card"><h2>Network health</h2>
+    <p class="muted">Set each network's status. Degraded or down networks show a warning to customers in the app.</p>
+    <div class="scroll"><table><thead><tr><th>Network</th><th>Success rate (%)</th><th>Avg response (s)</th><th>Status</th></tr></thead><tbody>
+    ${DB.networks.map((n,i) => `<tr><td><b>${n.name}</b></td>
+      <td><input type="number" step="0.1" data-field="net" data-i="${i}" data-k="rate" value="${n.rate}" style="width:120px"></td>
+      <td><input type="number" step="0.1" data-field="net" data-i="${i}" data-k="lat" value="${n.lat}" style="width:120px"></td>
+      <td><select data-field="net" data-i="${i}" data-k="status">${['operational','degraded','down'].map(o => `<option ${n.status===o?'selected':''}>${o}</option>`).join('')}</select></td></tr>`).join('')}
+    </tbody></table></div></div>
+  <div class="card" style="margin-top:14px"><h2>Banner for customers</h2>
+    <div class="row"><input data-field="setting" data-k="banner" value="${esc(s.banner)}" placeholder="e.g. MTN data may be slow in some areas right now" style="flex:1">
+      <button class="btn ${s.bannerOn?'':'ghost'}" data-act="toggleSetting" data-k="bannerOn">${s.bannerOn?'Showing':'Hidden'}</button></div></div>`;
+}
+
+function viewSupport(){
+  if (!UI.ticket && DB.tickets.length) UI.ticket = DB.tickets[0].id;
+  const tk = DB.tickets.find(t => t.id === UI.ticket);
+  return `<div class="split">
+    <div class="card">${DB.tickets.map(t => `<div class="it ${t.id===UI.ticket?'on':''}" data-act="selTicket" data-id="${t.id}">
+      <div class="row between"><b>${esc(t.id)}</b>${badge(t.status)}</div><div>${esc(t.subject)}</div><div class="muted">${esc(t.user)}</div></div>`).join('') || '<p class="muted">No tickets.</p>'}</div>
+    <div class="card">${tk ? `
+      <div class="row between"><h2>${esc(tk.id)} · ${esc(tk.subject)}</h2>
+        <button class="btn ghost" data-act="resolve" data-id="${tk.id}">${tk.status==='open' ? 'Mark resolved' : 'Reopen'}</button></div>
+      <p class="muted">${esc(tk.user)}</p>
+      <div class="thread">${tk.msgs.map(m => `<div class="m ${m.from==='agent'?'agent':''}">${esc(m.text)}<div class="muted" style="font-size:11px">${m.from==='agent'?'Support':'Customer'} · ${when(m.at)}</div></div>`).join('')}</div>
+      <div class="row" style="margin:12px 0;gap:6px">${['Thanks for your patience. We are checking this now.','Your PIN has been reset. Please create a new one in the app.','Your refund has been sent to your wallet.'].map(q => `<button class="chip" data-act="quick" data-text="${esc(q)}">${esc(q.slice(0,30))}…</button>`).join('')}</div>
+      <textarea id="replyTxt" rows="3" placeholder="Type a reply to the customer"></textarea>
+      <div class="row end" style="margin-top:8px"><button class="btn" data-act="reply">Send reply</button></div>` : '<p class="muted">Select a ticket.</p>'}
+    </div></div>`;
+}
+
+function viewAnnounce(){
+  return `<div class="grid k2">
+    <div class="card"><h2>New announcement</h2>
+      <label class="fld"><span>Title</span><input id="aTitle" placeholder="e.g. New: Network health page"></label>
+      <label class="fld"><span>Message</span><textarea id="aBody" rows="4" placeholder="What customers should know"></textarea></label>
+      <label class="fld"><span>Audience</span><select id="aAud"><option>All customers</option><option>Resellers only</option><option>Receptionists</option></select></label>
+      <label class="fld"><span>Status</span><select id="aStatus"><option value="published">Publish now</option><option value="draft">Save as draft</option></select></label>
+      <button class="btn" data-act="annSave">Save announcement</button>
+      <p class="muted" style="margin-top:10px">The app shows its own built-in announcements today. Once connected to the backend, it will show these published messages instead.</p>
+    </div>
+    <div class="card"><h2>All announcements</h2>
+      ${DB.announcements.map(a => `<div class="line" style="align-items:flex-start">
+        <div style="flex:1;min-width:160px"><b>${esc(a.title)}</b><div class="muted">${esc(a.body)}</div><div class="muted" style="font-size:12px">${esc(a.audience)} · ${when(a.at)}</div></div>
+        ${a.status==='published' ? '<span class="tag t-ok">Published</span>' : '<span class="tag t-warn">Draft</span>'}
+        <button class="btn ghost" data-act="annToggle" data-id="${a.id}">${a.status==='published' ? 'Unpublish' : 'Publish'}</button>
+        <button class="btn ghost" data-act="annDel" data-id="${a.id}">Delete</button></div>`).join('') || '<p class="muted">None yet.</p>'}
+    </div></div>`;
+}
+
+function viewReferrals(){
+  const top = [...DB.users].sort((a,b) => (b.refs||0) - (a.refs||0)).slice(0,6);
+  return `<div class="grid k2">
+    <div class="card"><h2>Reward rules</h2>
+      <label class="fld"><span>Welcome bonus for new customers (₦)</span><input type="number" data-field="setting" data-k="welcomeBonus" value="${DB.settings.welcomeBonus}"></label>
+      <label class="fld"><span>Referral reward for the referrer (₦)</span><input type="number" data-field="setting" data-k="referralBonus" value="${DB.settings.referralBonus}"></label>
+      <p class="muted">The app currently uses ₦1,000 welcome and ₦100 referral. These values apply once the app reads them from the backend.</p></div>
+    <div class="card"><h2>Top referrers</h2>
+      ${top.map((u,i) => `<div class="line"><b>${i+1}. ${esc(u.name)}</b><span class="muted">${esc(refCodeOf(u))}</span><span style="margin-left:auto">${u.refs||0} joined</span></div>`).join('')}</div>
+  </div>`;
+}
+
+function summaryLines(){
+  const today = dayKey(TODAY);
+  const t = DB.txs.filter(x => dayKey(x.at) === today);
+  const s = t.filter(x => x.status==='success');
+  const joined = DB.users.filter(u => dayKey(u.joined) === today).length;
+  return [
+    ['Transactions today', t.length],
+    ['Successful today', s.length],
+    ['Volume today', ngn(s.reduce((a,x) => a + x.amt, 0))],
+    ['Profit today', ngn(s.reduce((a,x) => a + x.pr, 0))],
+    ['Failed today', t.length - s.length],
+    ['New customers today', joined],
+    ['Open support tickets', DB.tickets.filter(x => x.status==='open').length]
+  ].map(([a,b]) => `<div class="line"><span>${a}</span><b style="margin-left:auto">${b}</b></div>`).join('');
+}
+function viewReports(){
+  return `<div class="grid k2">
+    <div class="card"><h2>Export CSV</h2><p class="muted">Open in Excel or Google Sheets.</p>
+      <div class="row" style="gap:8px"><button class="btn" data-act="exportUsers">Customers</button><button class="btn" data-act="exportTxs">Transactions</button><button class="btn" data-act="exportTickets">Support tickets</button><button class="btn" data-act="exportAudit">Audit log</button></div></div>
+    <div class="card"><h2>Today's summary</h2>${summaryLines()}</div>
+  </div>`;
+}
+
+function viewAudit(){
+  return `<div class="card"><h2>Audit log</h2><p class="muted">Every change made in this dashboard, newest first.</p>
+    <div class="scroll"><table><thead><tr><th>When</th><th>By</th><th>Action</th><th>Detail</th></tr></thead><tbody>
+    ${DB.audit.slice(0,200).map(a => `<tr><td>${when(a.at)}</td><td>${esc(a.by)}</td><td><b>${esc(a.action)}</b></td><td>${esc(a.detail)}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">No activity yet.</td></tr>'}
+    </tbody></table></div></div>`;
+}
+
+function viewSettings(){
+  const s = DB.settings;
+  return `<div class="grid k2">
+    <div class="card"><h2>App control</h2>
+      <div class="line"><div style="flex:1"><b>Maintenance mode</b><div class="muted">Shows a "temporarily unavailable" notice to customers.</div></div><button class="tg ${s.maintenance?'on':''}" data-act="toggleSetting" data-k="maintenance" aria-label="Maintenance"></button></div>
+      <div class="line"><div style="flex:1"><b>Show demo logins on the app</b><div class="muted">Turn this off before public launch.</div></div><button class="tg ${s.showDemo?'on':''}" data-act="toggleSetting" data-k="showDemo" aria-label="Demo logins"></button></div>
+      <label class="fld"><span>PIN attempts before a block</span><input type="number" data-field="setting" data-k="pinMaxTries" value="${s.pinMaxTries}"></label>
+      <label class="fld"><span>Block length (minutes)</span><input type="number" data-field="setting" data-k="pinLockMins" value="${s.pinLockMins}"></label>
+    </div>
+    <div class="card"><h2>Backend connection</h2>
+      <label class="fld"><span>API address (leave empty to use this browser only)</span><input data-field="setting" data-k="apiBase" value="${esc(s.apiBase)}" placeholder="https://api.yourdomain.com"></label>
+      <p class="muted">Right now this dashboard keeps data in this browser only. Connect a backend to manage live customers, transactions and wallets.</p>
+      <h2 style="margin-top:16px">Backup</h2>
+      <div class="row" style="gap:8px"><button class="btn ghost" data-act="backup">Download backup</button><button class="btn ghost" data-act="restore">Restore backup</button></div>
+      <input type="file" id="restoreFile" accept="application/json" hidden>
+      <h2 style="margin-top:16px;color:var(--bad)">Danger zone</h2>
+      <div class="danger-zone"><button class="btn danger" data-act="resetData">Reset all data</button></div>
+    </div>
+  </div>`;
+}
+
+
+/* ---------- Integrations and brand ---------- */
+function renderIntegCard(kind, title, help, plain){
+  const c = DB.integrations[kind];
+  const apiNote = DB.settings.apiBase ? '' : '<div class="secret-note" style="margin:10px 0">Connect a backend first. Secret keys are only saved on your server.</div>';
+  return `<div class="card">
+    <div class="row between"><h2>${title}</h2><button class="tg ${c.enabled?'on':''}" data-act="toggleInteg" data-kind="${kind}" aria-label="Enable ${title}"></button></div>
+    <p class="muted">${help}</p>
+    <label class="fld"><span>Provider</span><select data-field="integ" data-kind="${kind}" data-k="provider">
+      ${PROVIDERS[kind].map(([v,l]) => `<option value="${v}" ${c.provider===v?'selected':''}>${l}</option>`).join('')}</select></label>
+    ${plain.map(([k,l]) => `<label class="fld"><span>${l}</span><input data-field="integ" data-kind="${kind}" data-k="${k}" value="${esc(c[k] ?? '')}"></label>`).join('')}
+    ${INTEG_SECRETS[kind].map(k => `<label class="fld"><span>${SECRET_LABEL[k]} ${c['has_'+k] ? '<span class="tag t-ok">saved on server</span>' : '<span class="tag t-warn">not saved</span>'}</span>
+      <input type="password" id="sec_${kind}_${k}" autocomplete="new-password" placeholder="${c['has_'+k] ? 'Leave blank to keep the saved key' : 'Paste the key here'}"></label>`).join('')}
+    ${apiNote}
+    <div class="row" style="margin-top:12px"><button class="btn" data-act="saveInteg" data-kind="${kind}">Save</button><button class="btn ghost" data-act="testInteg" data-kind="${kind}">Test connection</button></div>
+    <p class="muted" style="font-size:12px;margin-top:10px">Last test: ${c.lastTest ? esc(c.lastTest) : 'never'}</p>
+  </div>`;
+}
+function viewIntegrations(){
+  const base = DB.settings.apiBase;
+  return `
+  <div class="card" style="margin-bottom:14px"><h2>Provider connections</h2>
+    <p class="muted">Keys for payments, airtime and email stay on your server. This page only sends them there and never keeps them in the browser.
+      ${base ? `Connected to <b>${esc(base)}</b>.` : '<b>No backend connected yet.</b> Set the API address in Settings before you save any secret keys.'}</p>
+    <p class="muted" style="font-size:12px">Payment webhook to paste into your gateway: <b>${esc(base || 'https://your-backend.example.com')}/webhooks/payments</b></p>
+  </div>
+  <div class="grid k2">
+    ${renderIntegCard('vtu','VTU provider','Sends airtime, data and bill orders. Use the sandbox environment while testing.', INTEG_PLAIN.vtu)}
+    ${renderIntegCard('pay','Payment gateway','Receives customer payments and funds wallets. Use test keys until you are ready to go live.', INTEG_PLAIN.pay)}
+    ${renderIntegCard('smtp','Email (SMTP)','Sends receipts, verification codes and alerts from your business address.', INTEG_PLAIN.smtp)}
+  </div>`;
+}
+function viewBrand(){
+  const b = DB.brand;
+  return `<div class="grid k2">
+    <div class="card"><h2>Brand details</h2>
+      <label class="fld"><span>App name</span><input data-field="brand" data-k="appName" value="${esc(b.appName)}"></label>
+      <label class="fld"><span>Tagline</span><input data-field="brand" data-k="tagline" value="${esc(b.tagline)}"></label>
+      <label class="fld"><span>Support email</span><input data-field="brand" data-k="supportEmail" value="${esc(b.supportEmail)}"></label>
+      <label class="fld"><span>Support phone or WhatsApp</span><input data-field="brand" data-k="supportPhone" value="${esc(b.supportPhone)}"></label>
+      <label class="fld"><span>Currency symbol</span><input data-field="brand" data-k="currency" value="${esc(b.currency)}" style="width:120px"></label>
+      <label class="fld"><span>Footer credit</span><input data-field="brand" data-k="footer" value="${esc(b.footer)}"></label>
+    </div>
+    <div class="card"><h2>Colours</h2>
+      <div class="row" style="gap:16px">
+        <label class="fld" style="flex:1"><span>Main colour</span><input type="color" data-field="brand" data-k="primary" value="${b.primary}"></label>
+        <label class="fld" style="flex:1"><span>Accent colour</span><input type="color" data-field="brand" data-k="accent" value="${b.accent}"></label>
+        <label class="fld" style="flex:1"><span>Text colour</span><input type="color" data-field="brand" data-k="ink" value="${b.ink}"></label>
+      </div>
+      <h2 style="margin-top:14px">Logo</h2>
+      <div class="row"><div class="logo-box">${b.logo ? `<img src="${b.logo}" alt="Logo">` : 'No logo'}</div>
+        <button class="btn ghost" data-act="pickLogo">Upload logo</button>${b.logo ? '<button class="btn ghost" data-act="removeLogo">Remove</button>' : ''}
+        <input type="file" id="brandLogo" accept="image/*" hidden></div>
+      <p class="muted" style="font-size:12px">PNG or JPG, under 300 KB. A square image works best.</p>
+      <h2 style="margin-top:14px">Share with the app</h2>
+      <button class="btn ghost" data-act="exportBrand">Download brand config (JSON)</button>
+    </div>
+    <div class="card" style="grid-column:1/-1"><h2>Preview</h2>
+      <div class="brand-prev" style="background:${b.primary};color:${b.ink}">
+        <div class="row" style="gap:12px">${b.logo ? `<img src="${b.logo}" alt="" style="width:44px;height:44px;border-radius:12px;object-fit:cover">` : ''}
+          <div><div style="font-weight:800;font-size:22px">${esc(b.appName)}</div><div style="opacity:.8">${esc(b.tagline)}</div></div></div>
+        <div class="row" style="margin-top:14px;gap:8px"><span class="bp-btn" style="background:${b.accent}">Buy airtime</span><span class="bp-btn" style="background:#fff">${esc(b.currency)}12,450</span></div>
+      </div>
+      <p class="muted" style="font-size:12px;margin-top:10px">${esc(b.footer)} · ${esc(b.supportEmail)}</p>
+    </div>
+  </div>`;
+}
+
+/* ---------- Integration actions (secrets go to the backend only) ---------- */
+function pickPlain(c){
+  const out = {};
+  Object.keys(c).forEach(k => { if (!k.startsWith('has_') && k !== 'lastTest') out[k] = c[k]; });
+  return out;
+}
+function saveInteg(kind){
+  const c = DB.integrations[kind];
+  const secrets = {};
+  INTEG_SECRETS[kind].forEach(k => { const el = $('#sec_' + kind + '_' + k); if (el && el.value) secrets[k] = el.value; });
+  const hasSecret = Object.keys(secrets).length > 0;
+  const base = DB.settings.apiBase;
+  if (!base) {
+    save(); log('integration.save', kind + ' (settings only)');
+    if (hasSecret) { INTEG_SECRETS[kind].forEach(k => { const el = $('#sec_' + kind + '_' + k); if (el) el.value = ''; });
+      toast('Settings saved. Secret keys were not stored: connect a backend first.', 'err'); }
+    else toast('Settings saved in this browser');
+    return render();
+  }
+  fetch(base + '/admin/integrations/' + kind, {
+    method:'PUT', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({config: pickPlain(c), secrets})
+  })
+  .then(r => { if (!r.ok) throw new Error('server responded ' + r.status); return r; })
+  .then(() => {
+    INTEG_SECRETS[kind].forEach(k => { if (secrets[k]) c['has_' + k] = true; });
+    save(); log('integration.save', kind + (hasSecret ? ' (keys updated on server)' : ' (settings)'));
+    toast('Saved to your backend'); render();
+  })
+  .catch(err => toast('Could not save: ' + err.message, 'err'));
+}
+function testInteg(kind){
+  const c = DB.integrations[kind], base = DB.settings.apiBase;
+  if (!base) { toast('Connect a backend first (Settings → Backend connection)', 'err'); return; }
+  fetch(base + '/admin/integrations/' + kind + '/test', {method:'POST'})
+  .then(r => r.json())
+  .then(d => {
+    c.lastTest = (d.ok ? 'passed' : 'failed') + ' · ' + when(new Date().toISOString()) + (d.message ? ' · ' + d.message : '');
+    save(); log('integration.test', kind + ' ' + (d.ok ? 'passed' : 'failed'));
+    toast(d.ok ? 'Connection works' : 'Test failed: ' + (d.message || 'check the keys'), d.ok ? 'ok' : 'err'); render();
+  })
+  .catch(err => { c.lastTest = 'failed · ' + when(new Date().toISOString()); save(); toast('Test failed: ' + err.message, 'err'); render(); });
+}
+
+
+/* ---------- Plans and bills catalog ---------- */
+const IMPORT_MAP = {group:'group', vendor:'vendor', network:'network', service_id:'serviceId', plan_id:'planId', name:'name', size:'size',
+  validity:'validity', bundle:'bundle', cost:'cost', price:'price', reseller_price:'resellerPrice', meter:'meter',
+  min_amount:'minAmt', max_amount:'maxAmt', fee_percent:'feePct', validation:'validation', unit:'unit'};
+function catReady(it){
+  if (!it.vendor || !it.network || !it.name) return false;
+  if (it.group === 'power') return !!it.planId && it.minAmt > 0 && it.maxAmt >= it.minAmt;
+  if (it.planId === 'variable') return it.minAmt > 0 && it.maxAmt >= it.minAmt;
+  return !!it.planId && it.price > 0;
+}
+function catStatus(it){
+  if (it.active) return '<span class="tag t-ok">Live</span>';
+  if (!it.vendor) return '<span class="tag t-warn">Needs vendor</span>';
+  if (!it.planId) return '<span class="tag t-warn">Needs plan code</span>';
+  if (it.group === 'power' || it.planId === 'variable') {
+    if (!(it.minAmt > 0 && it.maxAmt >= it.minAmt)) return '<span class="tag t-warn">Needs limits</span>';
+  } else if (!(it.price > 0)) return '<span class="tag t-warn">Needs price</span>';
+  if (!catReady(it)) return '<span class="tag t-warn">Incomplete</span>';
+  return '<span class="tag t-info">Off</span>';
+}
+function catRow(it){
+  return {group:it.group, vendor:it.vendor, network:it.network, service_id:it.serviceId, plan_id:it.planId, name:it.name,
+    size:it.size, validity:it.validity, bundle:it.bundle, cost:it.cost, price:it.price, reseller_price:it.resellerPrice,
+    meter:it.meter, min_amount:it.minAmt, max_amount:it.maxAmt, fee_percent:it.feePct, validation:it.validation,
+    unit:it.unit, active:it.active};
+}
+function catCell(it, k){
+  if (k === 'feePct') return it.feePct + '%';
+  if (CAT_MONEY.includes(k)) return it[k] ? ngn(it[k]) : '<span class="muted">-</span>';
+  if (k === 'planId') return it.planId ? esc(it.planId) : '<span class="muted">missing</span>';
+  if (k === 'vendor') return it.vendor ? esc(it.vendor) : '<span class="muted">missing</span>';
+  return it[k] ? esc(it[k]) : '<span class="muted">-</span>';
+}
+function catProfit(it){
+  if (it.group === 'power') return it.feePct + '% of each amount';
+  if (it.group === 'other' && it.planId === 'variable') return 'per top-up';
+  return ngn((it.price || 0) - (it.cost || 0));
+}
+function viewCatalog(){
+  UI.cat = UI.cat || 'data';
+  const g = UI.cat, rows = DB.catalog.filter(i => i.group === g);
+  const cols = CAT_FORM[g].filter(k => k !== 'serviceId');
+  return `
+  <div class="notice" style="margin-bottom:14px"><b>How a VTU business sets this up.</b>
+    Each product needs a vendor, a vendor service ID, and a plan or product code. Customer and reseller prices are set separately.
+    Cable TV and electricity also need validation before payment. Electricity needs limits and a service fee.
+    Items stay off until they are complete. Check codes and prices against your vendor's current list.</div>
+  <div class="grid k4" style="margin-bottom:14px">
+    ${kpi('Items', DB.catalog.length, DB.catalog.filter(i => i.active).length + ' live')}
+    ${kpi('Needs setup', DB.catalog.filter(i => !catReady(i)).length, 'not ready to go live')}
+    ${kpi('Needs vendor', DB.catalog.filter(i => !i.vendor).length, 'no primary vendor chosen')}
+    ${kpi('Live in ' + (CAT_GROUPS.find(x => x[0]===g) || [0,''])[1], rows.filter(i => i.active).length, 'of ' + rows.length + ' items')}
+  </div>
+  <div class="card">
+    <div class="row between" style="margin-bottom:12px;flex-wrap:wrap">
+      <div class="row">${CAT_GROUPS.map(([k,l]) => `<button class="chip ${g===k?'on':''}" data-act="setCat" data-v="${k}">${l}</button>`).join('')}</div>
+      <div class="row"><button class="btn" data-act="catAdd">Add item</button><button class="btn ghost" data-act="catImport">Import CSV</button><button class="btn ghost" data-act="catExport">Export CSV</button><button class="btn ghost" data-act="catTemplate">Template</button></div>
+    </div>
+    <div class="scroll"><table><thead><tr>${cols.map(k => `<th>${esc(CAT_LABEL[k])}</th>`).join('')}<th>Profit</th><th>Status</th><th></th></tr></thead><tbody>
+      ${rows.map(it => `<tr>
+        ${cols.map(k => `<td>${k==='name' ? `<div style="font-weight:600">${esc(it.name)}</div><div class="muted" style="font-size:11px">${esc(it.note || '')}</div>` : catCell(it, k)}</td>`).join('')}
+        <td>${catProfit(it)}</td><td>${catStatus(it)}</td>
+        <td><div class="row" style="gap:6px;flex-wrap:nowrap">
+          <button class="tg ${it.active?'on':''}" data-act="catToggle" data-id="${it.id}" aria-label="Turn on or off"></button>
+          <button class="btn ghost" data-act="catEdit" data-id="${it.id}">Edit</button>
+          <button class="btn ghost" data-act="catDel" data-id="${it.id}">Delete</button></div></td></tr>`).join('')
+        || `<tr><td colspan="${cols.length + 3}" class="muted">No ${esc((CAT_GROUPS.find(x => x[0]===g) || [0,'items'])[1])} items yet. Click Add item.</td></tr>`}
+    </tbody></table></div>
+  </div>`;
+}
+function openCatForm(it){
+  const g = UI.cat || 'data';
+  const v = it || normItem({group:g});
+  const field = k => {
+    if (CAT_OPTS[k]) return `<label class="fld"><span>${esc(CAT_LABEL[k])}</span><select id="cf_${k}">${CAT_OPTS[k].map(o => `<option ${String(v[k]||'')===o?'selected':''}>${esc(o)}</option>`).join('')}</select></label>`;
+    const num = CAT_MONEY.includes(k) || k === 'feePct';
+    return `<label class="fld"><span>${esc(CAT_LABEL[k])}</span><input id="cf_${k}" type="${num?'number':'text'}" value="${esc(v[k] ?? '')}"></label>`;
+  };
+  $('#modalBody').innerHTML = `<h2>${it ? 'Edit' : 'Add'} ${esc((CAT_GROUPS.find(x => x[0]===g) || [0,''])[1])} item</h2>
+    ${CAT_FORM[g].map(field).join('')}
+    <label class="fld"><span>Note for your team</span><input id="cf_note" value="${esc(v.note || '')}"></label>
+    <p class="muted" style="font-size:12px">Use "variable" as the plan code for any-amount top-ups. Electricity uses the limits and service fee instead of a fixed price.</p>
+    <div class="row end" style="margin-top:14px"><button class="btn ghost" data-act="closeModal">Cancel</button><button class="btn" id="catSave">Save item</button></div>`;
+  $('#modal').classList.add('on');
+  $('#catSave').onclick = () => {
+    const item = normItem(Object.assign({}, v, {group:g, active:false}));
+    CAT_FORM[g].forEach(k => { const el = $('#cf_' + k); if (el) item[k] = el.value.trim(); });
+    CAT_MONEY.concat(['feePct']).forEach(k => item[k] = +item[k] || 0);
+    item.note = $('#cf_note').value.trim();
+    item.updated = new Date().toISOString();
+    if (!item.network || !item.name) return toast('Provider and plan name are required', 'err');
+    item.active = !!v.active && catReady(item);
+    const idx = DB.catalog.findIndex(x => x.id === v.id);
+    if (idx > -1) DB.catalog[idx] = item; else DB.catalog.push(item);
+    save(); log(idx > -1 ? 'catalog.edit' : 'catalog.add', `${item.network} ${item.name}`);
+    closeModal(); toast(catReady(item) ? 'Item saved. Turn it on when you are ready.' : 'Item saved as incomplete. ' + catStatus(item).replace(/<[^>]+>/g, '')); render();
+  };
+}
+function openImport(){
+  $('#modalBody').innerHTML = `<h2>Import catalog (CSV)</h2>
+    <p class="muted">First row = column names. Columns: group, vendor, network, service_id, plan_id, name, size, validity, bundle, cost, price, reseller_price, meter, min_amount, max_amount, fee_percent, validation, unit. Use the Template button for the exact headers. Imported items start switched off.</p>
+    <input type="file" id="impFile" accept=".csv,text/csv" style="margin-bottom:8px">
+    <textarea id="impTxt" rows="8" placeholder="Or paste CSV rows here"></textarea>
+    <div class="row end" style="margin-top:12px"><button class="btn ghost" data-act="closeModal">Cancel</button><button class="btn" data-act="catImportRun">Import</button></div>`;
+  $('#modal').classList.add('on');
+}
+function parseCSV(text){
+  const lines = text.trim().split(/\r?\n/).filter(Boolean);
+  if (!lines.length) return [];
+  const head = lines.shift().split(',').map(h => h.trim().toLowerCase());
+  return lines.map(l => { const cells = l.split(',').map(c => c.trim().replace(/^"|"$/g, '')); const o = {}; head.forEach((h,i) => o[h] = cells[i] ?? ''); return o; });
+}
+function runImport(){
+  const rows = parseCSV($('#impTxt').value);
+  if (!rows.length) return toast('Paste or choose a CSV first', 'err');
+  let added = 0, updated = 0, skipped = 0;
+  rows.forEach(r => {
+    const obj = {};
+    Object.keys(IMPORT_MAP).forEach(h => { if (r[h] !== undefined && r[h] !== '') obj[IMPORT_MAP[h]] = r[h]; });
+    const group = (obj.group || 'data').toLowerCase();
+    if (!CAT_FORM[group] || !obj.network || !obj.name) { skipped++; return; }
+    delete obj.group; obj.group = group;
+    const existing = DB.catalog.find(x => x.group === group && x.network === obj.network && (obj.planId ? x.planId === obj.planId : x.name === obj.name));
+    const item = normItem(Object.assign({}, existing || {}, obj, {id: existing ? existing.id : undefined, updated: new Date().toISOString()}));
+    item.active = existing ? existing.active && catReady(item) : false;
+    if (existing) { Object.assign(existing, item); updated++; } else { DB.catalog.push(item); added++; }
+  });
+  save(); log('catalog.import', `${added} added, ${updated} updated, ${skipped} skipped`);
+  closeModal(); toast(`Imported: ${added} added, ${updated} updated${skipped ? ', ' + skipped + ' skipped' : ''}`); render();
+}
+
+/* ---------- Access control, staff, roles and profile ---------- */
+const $$ = sel => [...document.querySelectorAll(sel)];
+const PERMS = [
+  ['overview','View overview'], ['customers','View customers'], ['customers.edit','Edit customers (wallet, tier, status, PIN, alerts)'],
+  ['transactions','View transactions'], ['transactions.refund','Refund transactions'],
+  ['catalog','View plans and bills'], ['catalog.edit','Add, edit and import plans and bills'],
+  ['pricing','View prices and margins'], ['pricing.edit','Change prices and switch plans or providers'],
+  ['network','View network health'], ['network.edit','Change network status'],
+  ['support','View support inbox'], ['support.reply','Reply to and resolve tickets'],
+  ['announce','View announcements'], ['announce.publish','Publish, unpublish and delete announcements'],
+  ['referrals','View referrals'], ['reports','View reports'], ['reports.export','Export CSV files'],
+  ['audit','View audit log'], ['integrations','View integrations'], ['integrations.edit','Change integrations and provider keys'],
+  ['brand','View brand'], ['brand.edit','Change brand and logo'],
+  ['settings','View settings'], ['settings.edit','Change settings, backups and reset data'],
+  ['staff','View staff'], ['staff.manage','Create, edit and suspend staff'],
+  ['roles','View roles'], ['roles.manage','Create and edit roles']
+];
+const VIEW_PERM = {overview:'overview', users:'customers', txs:'transactions', catalog:'catalog', services:'pricing',
+  network:'network', support:'support', announce:'announce', referrals:'referrals', reports:'reports', audit:'audit',
+  integrations:'integrations', brand:'brand', settings:'settings', staff:'staff', roles:'roles', profile:null};
+const ACT_PERM = {uWallet:'customers.edit', uTier:'customers.edit', uSuspend:'customers.edit', uResetPin:'customers.edit', uNotify:'customers.edit',
+  txRefund:'transactions.refund', catAdd:'catalog.edit', catEdit:'catalog.edit', catToggle:'catalog.edit', catDel:'catalog.edit',
+  catImport:'catalog.edit', catImportRun:'catalog.edit', togglePlan:'pricing.edit', toggleProv:'pricing.edit',
+  annSave:'announce.publish', annToggle:'announce.publish', annDel:'announce.publish', reply:'support.reply', resolve:'support.reply',
+  toggleSetting:'settings.edit', backup:'settings.edit', restore:'settings.edit', resetData:'settings.edit',
+  toggleInteg:'integrations.edit', saveInteg:'integrations.edit', testInteg:'integrations.edit',
+  pickLogo:'brand.edit', removeLogo:'brand.edit', exportBrand:'brand.edit',
+  catExport:'reports.export', catTemplate:'reports.export', exportUsers:'reports.export', exportTxs:'reports.export',
+  exportTickets:'reports.export', exportAudit:'reports.export',
+  staffAdd:'staff.manage', staffEdit:'staff.manage', staffToggle:'staff.manage', staffReset:'staff.manage', staffDel:'staff.manage',
+  roleAdd:'roles.manage', roleEdit:'roles.manage', roleDel:'roles.manage'};
+const NAV_GROUPS = [['Business',['overview','users','txs','catalog','services']], ['Operations',['network','support','announce','referrals']],
+  ['Records',['reports','audit']], ['Setup',['integrations','brand','settings']], ['Team',['staff','roles']], ['Account',['profile']]];
+
+function defaultRoles(){
+  return [
+    {id:'super', name:'Super admin', perms:'*', system:true, desc:'Full access to everything. Cannot be edited.'},
+    {id:'ops', name:'Operations manager', perms:['overview','customers','customers.edit','catalog','catalog.edit','pricing','pricing.edit','network','network.edit','transactions','reports','reports.export','audit'], system:false, desc:'Runs plans, prices, networks and customer issues.'},
+    {id:'finance', name:'Finance', perms:['overview','transactions','transactions.refund','reports','reports.export','referrals','audit'], system:false, desc:'Refunds, reports and reconciliation.'},
+    {id:'support', name:'Support agent', perms:['overview','customers','transactions','support','support.reply','announce'], system:false, desc:'Answers customers and handles tickets.'}
+  ];
+}
+function ownerFrom(d){
+  const pass = d && d.admin ? d.admin.pass : 'admin123';
+  const email = d && d.admin ? d.admin.email : 'admin@jadanpay.app';
+  return {id:'S1', name:'Owner', email, phone:'', roleId:'super', status:'active', pass, mustChange:false, created:new Date().toISOString(), lastLogin:''};
+}
+function self(){ return DB.staff.find(x => x.id === CUR) || null; }
+function roleOf(st){ return st ? DB.roles.find(r => r.id === st.roleId) || null : null; }
+function can(p){
+  const st = self(); if (!st || st.status !== 'active') return false;
+  const r = roleOf(st); if (!r) return false;
+  return r.perms === '*' || r.perms.includes(p);
+}
+function canView(k){ const p = VIEW_PERM[k]; return p === null || (p !== undefined && can(p)); }
+function initials(n){ return String(n || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(); }
+function strongPass(p){ return p.length >= 8 && /[A-Za-z]/.test(p) && /\d/.test(p); }
+function newSalt(){ const b = new Uint8Array(16); crypto.getRandomValues(b); return Array.from(b, x => x.toString(16).padStart(2,'0')).join(''); }
+async function hashP(p, salt){
+  const data = new TextEncoder().encode(salt + ':' + p);
+  if (crypto.subtle) { const buf = await crypto.subtle.digest('SHA-256', data); return Array.from(new Uint8Array(buf), x => x.toString(16).padStart(2,'0')).join(''); }
+  let h = 0; for (const c of data) h = (h * 31 + c) >>> 0; return 'x' + h.toString(16);
+}
+async function checkPass(st, p){
+  if (st.hash) return (await hashP(p, st.salt)) === st.hash;
+  return !!st.pass && st.pass === p;
+}
+async function ensureStaffHashes(){
+  let changed = false;
+  for (const st of DB.staff) {
+    if (st.pass && !st.hash) { st.salt = newSalt(); st.hash = await hashP(st.pass, st.salt); delete st.pass; changed = true; }
+  }
+  if (changed) { save(); log('staff.secure', 'passwords stored as hashes'); }
+}
+function superCount(){ return DB.staff.filter(s => (roleOf(s) || {}).id === 'super' && s.status === 'active').length; }
+function permLabel(p){ const f = PERMS.find(x => x[0] === p); return f ? f[1] : p; }
+
+/* Staff */
+function viewStaff(){
+  const m = can('staff.manage');
+  return `<div class="card">
+    <div class="row between" style="margin-bottom:12px;flex-wrap:wrap">
+      <div><h2>Staff accounts</h2><p class="muted">Each staff member signs in with their own email and password, and sees only what their role allows.</p></div>
+      ${m ? '<button class="btn" data-act="staffAdd">Add staff</button>' : ''}
+    </div>
+    <div class="scroll"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Last sign-in</th><th></th></tr></thead><tbody>
+    ${DB.staff.map(st => {
+      const r = roleOf(st); const isMe = st.id === CUR;
+      const actions = m && !isMe ? `<div class="row" style="gap:6px;flex-wrap:nowrap">
+          <button class="btn ghost" data-act="staffEdit" data-id="${st.id}">Edit</button>
+          <button class="btn ghost" data-act="staffToggle" data-id="${st.id}">${st.status==='active' ? 'Suspend' : 'Activate'}</button>
+          <button class="btn ghost" data-act="staffReset" data-id="${st.id}">Reset password</button>
+          <button class="btn ghost" data-act="staffDel" data-id="${st.id}">Delete</button></div>` : '<span class="muted">' + (isMe ? 'You' : 'View only') + '</span>';
+      return `<tr><td><b>${esc(st.name)}</b>${st.mustChange ? '<div class="muted" style="font-size:11px">Must change password</div>' : ''}</td>
+        <td>${esc(st.email)}</td><td>${esc(st.phone || '-')}</td><td>${esc(r ? r.name : 'No role')}</td>
+        <td>${st.status==='active' ? '<span class="tag t-ok">Active</span>' : '<span class="tag t-bad">Suspended</span>'}</td>
+        <td>${st.lastLogin ? when(st.lastLogin) : '<span class="muted">never</span>'}</td><td>${actions}</td></tr>`;
+    }).join('')}
+    </tbody></table></div></div>`;
+}
+function openStaffForm(st){
+  const v = st || {name:'', email:'', phone:'', roleId:(DB.roles.find(r => r.id !== 'super') || DB.roles[0]).id};
+  $('#modalBody').innerHTML = `<h2>${st ? 'Edit staff member' : 'Add staff member'}</h2>
+    <label class="fld"><span>Full name</span><input id="sf_name" value="${esc(v.name)}"></label>
+    <label class="fld"><span>Email (used to sign in)</span><input id="sf_email" type="email" value="${esc(v.email)}" ${st ? 'disabled' : ''}></label>
+    <label class="fld"><span>Phone</span><input id="sf_phone" value="${esc(v.phone || '')}"></label>
+    <label class="fld"><span>Role</span><select id="sf_role">${DB.roles.map(r => `<option value="${r.id}" ${r.id===v.roleId?'selected':''}>${esc(r.name)}</option>`).join('')}</select></label>
+    ${st ? '' : `<label class="fld"><span>Temporary password</span><input id="sf_pass" type="password" autocomplete="new-password" placeholder="8+ characters, with a letter and a number"></label>
+      <p class="muted" style="font-size:12px">The staff member must change this password at first sign-in.</p>`}
+    <div class="row end" style="margin-top:14px"><button class="btn ghost" data-act="closeModal">Cancel</button><button class="btn" id="sfSave">Save</button></div>`;
+  $('#modal').classList.add('on');
+  $('#sfSave').onclick = async () => {
+    const name = $('#sf_name').value.trim(), phone = $('#sf_phone').value.trim(), roleId = $('#sf_role').value;
+    if (!name) return toast('Enter a name', 'err');
+    if (!DB.roles.find(r => r.id === roleId)) return toast('Choose a role', 'err');
+    if (st) {
+      if (st.roleId === 'super' && roleId !== 'super' && superCount() <= 1) return toast('Keep at least one super admin', 'err');
+      st.name = name; st.phone = phone; st.roleId = roleId; save(); log('staff.edit', st.email);
+      closeModal(); toast('Staff member updated'); return render();
+    }
+    const email = $('#sf_email').value.trim().toLowerCase(), pass = $('#sf_pass').value;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('Enter a valid email', 'err');
+    if (DB.staff.some(x => x.email === email)) return toast('That email already has an account', 'err');
+    if (!strongPass(pass)) return toast('Password needs 8+ characters with a letter and a number', 'err');
+    const salt = newSalt();
+    DB.staff.push({id:'S' + Date.now(), name, email, phone, roleId, status:'active', salt, hash: await hashP(pass, salt),
+      mustChange:true, created:new Date().toISOString(), lastLogin:''});
+    save(); log('staff.create', `${name} (${(roleOf({roleId}) || {}).name || roleId})`);
+    closeModal(); toast('Staff account created'); render();
+  };
+}
+function toggleStaff(id){
+  const st = DB.staff.find(x => x.id === id); if (!st) return;
+  if (st.id === CUR) return toast("You can't suspend your own account", 'err');
+  const isSuper = (roleOf(st) || {}).id === 'super';
+  if (st.status === 'active' && isSuper && superCount() <= 1) return toast('Keep at least one active super admin', 'err');
+  st.status = st.status === 'active' ? 'suspended' : 'active';
+  save(); log('staff.status', `${st.email} → ${st.status}`); toast(`${st.name} is now ${st.status}`); render();
+}
+async function resetStaff(id){
+  const st = DB.staff.find(x => x.id === id); if (!st) return;
+  const tmp = 'Jp' + Math.random().toString(36).slice(2, 8) + (10 + Math.floor(Math.random() * 90));
+  st.salt = newSalt(); st.hash = await hashP(tmp, st.salt); delete st.pass; st.mustChange = true;
+  save(); log('staff.reset', st.email);
+  $('#modalBody').innerHTML = `<h2>Temporary password</h2>
+    <p>For <b>${esc(st.name)}</b> (${esc(st.email)}):</p>
+    <div class="tmp">${esc(tmp)}</div>
+    <p class="muted" style="font-size:12px">Share it securely. It will not be shown again. They must change it when they sign in.</p>
+    <div class="row end"><button class="btn" data-act="closeModal">Done</button></div>`;
+  $('#modal').classList.add('on'); render();
+}
+function deleteStaff(id){
+  const st = DB.staff.find(x => x.id === id); if (!st) return;
+  if (st.id === CUR) return toast("You can't delete your own account", 'err');
+  if ((roleOf(st) || {}).id === 'super' && st.status === 'active' && superCount() <= 1) return toast('Keep at least one super admin', 'err');
+  openForm('Delete ' + st.name, [{id:'c', label:'Type DELETE to confirm'}], 'Delete account', vals => {
+    if (vals.c !== 'DELETE') return 'Type DELETE exactly.';
+    DB.staff = DB.staff.filter(x => x.id !== id); save(); log('staff.delete', st.email);
+    toast('Account deleted'); render();
+  });
+}
+
+/* Roles and permissions */
+function viewRoles(){
+  const m = can('roles.manage');
+  return `<div class="card">
+    <div class="row between" style="margin-bottom:12px;flex-wrap:wrap">
+      <div><h2>Roles and permissions</h2><p class="muted">A role decides what a staff member can see and change. Create a role for each job, then assign it to staff.</p></div>
+      ${m ? '<button class="btn" data-act="roleAdd">Create role</button>' : ''}
+    </div>
+    <div class="grid k2">${DB.roles.map(r => {
+      const n = DB.staff.filter(s => s.roleId === r.id).length;
+      const list = r.perms === '*' ? [] : r.perms;
+      return `<div class="card">
+        <div class="row between"><b>${esc(r.name)}</b><span class="tag t-info">${n} staff</span></div>
+        <p class="muted" style="font-size:12px;margin:6px 0">${esc(r.desc || '')}</p>
+        <div class="muted" style="font-size:12px">${r.perms === '*' ? 'Full access to every page and action.' : list.length + ' permissions: ' + list.slice(0,5).map(permLabel).join('; ') + (list.length > 5 ? '…' : '')}</div>
+        ${r.system ? '<p class="muted" style="font-size:12px;margin-top:10px">Built-in role. Cannot be changed.</p>'
+          : (m ? `<div class="row" style="margin-top:10px;gap:6px"><button class="btn ghost" data-act="roleEdit" data-id="${r.id}">Edit permissions</button><button class="btn ghost" data-act="roleDel" data-id="${r.id}">Delete</button></div>` : '')}
+      </div>`;
+    }).join('')}</div></div>`;
+}
+function openRoleForm(r){
+  const v = r || {id:'', name:'', desc:'', perms:[]};
+  $('#modalBody').innerHTML = `<h2>${r ? 'Edit role' : 'Create role'}</h2>
+    <label class="fld"><span>Role name</span><input id="rf_name" value="${esc(v.name)}" placeholder="e.g. Cashier"></label>
+    <label class="fld"><span>What this role is for</span><input id="rf_desc" value="${esc(v.desc || '')}" placeholder="Short description"></label>
+    <p class="muted" style="font-size:12px;margin:8px 0">Tick what this role may do. "View" lets someone open a page. "Edit" lets them change things on it.</p>
+    <div class="perm-grid">${PERMS.map(([k,l]) => `<label class="pm"><input type="checkbox" name="perm" value="${k}" ${v.perms.includes(k) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}</div>
+    <div class="row end" style="margin-top:14px"><button class="btn ghost" data-act="closeModal">Cancel</button><button class="btn" id="rfSave">${r ? 'Save role' : 'Create role'}</button></div>`;
+  $('#modal').classList.add('on');
+  $('#rfSave').onclick = () => {
+    const name = $('#rf_name').value.trim(), desc = $('#rf_desc').value.trim();
+    if (!name) return toast('Enter a role name', 'err');
+    const perms = $$('input[name=perm]:checked').map(x => x.value);
+    if (!perms.length) return toast('Tick at least one permission', 'err');
+    if (r) { r.name = name; r.desc = desc; r.perms = perms; log('role.edit', name); }
+    else { DB.roles.push({id:'R' + Date.now(), name, desc, perms, system:false}); log('role.create', name); }
+    save(); closeModal(); toast('Role saved'); render();
+  };
+}
+function deleteRole(id){
+  const r = DB.roles.find(x => x.id === id); if (!r) return;
+  if (r.system) return toast('Built-in roles cannot be deleted', 'err');
+  if (DB.staff.some(s => s.roleId === id)) return toast('Move the staff in this role to another role first', 'err');
+  DB.roles = DB.roles.filter(x => x.id !== id); save(); log('role.delete', r.name); toast('Role deleted'); render();
+}
+
+/* My profile (every signed-in person) */
+function viewProfile(){
+  const st = self(), r = roleOf(st) || {};
+  return `<div class="grid k2">
+    <div class="card"><h2>My profile</h2>
+      <div class="row" style="margin-bottom:14px;gap:14px"><div class="avatar-big">${esc(initials(st.name))}</div>
+        <div><b style="font-size:16px">${esc(st.name)}</b><div class="muted">${esc(r.name || 'No role')}</div></div></div>
+      <label class="fld"><span>Full name</span><input id="pf_name" value="${esc(st.name)}"></label>
+      <label class="fld"><span>Phone</span><input id="pf_phone" value="${esc(st.phone || '')}"></label>
+      <label class="fld"><span>Email (used to sign in)</span><input id="pf_email" type="email" value="${esc(st.email)}"></label>
+      <label class="fld"><span>Current password (needed only to change your email)</span><input id="pf_cur" type="password" autocomplete="current-password"></label>
+      <button class="btn" data-act="profSave">Save profile</button>
+    </div>
+    <div class="card"><h2>Change password</h2>
+      ${st.mustChange ? '<div class="notice" style="margin-bottom:12px">Your password was set by the owner. Please change it now.</div>' : ''}
+      <label class="fld"><span>Current password</span><input id="pw_cur" type="password" autocomplete="current-password"></label>
+      <label class="fld"><span>New password (8+ characters, with a letter and a number)</span><input id="pw_new" type="password" autocomplete="new-password"></label>
+      <label class="fld"><span>Confirm new password</span><input id="pw_new2" type="password" autocomplete="new-password"></label>
+      <button class="btn" data-act="profPass">Update password</button>
+      <h2 style="margin-top:18px">Access</h2>
+      <p class="muted" style="font-size:13px">Your role: <b>${esc(r.name || 'none')}</b>. ${r.perms === '*' ? 'Full access.' : (Array.isArray(r.perms) ? r.perms.length + ' permissions.' : '')}
+        Last sign-in: ${st.lastLogin ? when(st.lastLogin) : 'this session'}.</p>
+    </div></div>`;
+}
+async function saveProfile(){
+  const st = self();
+  const name = $('#pf_name').value.trim(), phone = $('#pf_phone').value.trim(), email = $('#pf_email').value.trim().toLowerCase();
+  if (!name) return toast('Name is required', 'err');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('Enter a valid email', 'err');
+  if (email !== st.email) {
+    if (DB.staff.some(x => x.id !== st.id && x.email === email)) return toast('That email is already used', 'err');
+    if (!(await checkPass(st, $('#pf_cur').value))) return toast('Enter your current password to change your email', 'err');
+    st.email = email;
+  }
+  st.name = name; st.phone = phone; save(); log('profile.update', st.email);
+  toast('Profile saved'); render();
+}
+async function changeOwnPassword(){
+  const st = self();
+  const cur = $('#pw_cur').value, nw = $('#pw_new').value, nw2 = $('#pw_new2').value;
+  if (!(await checkPass(st, cur))) return toast('Current password is wrong', 'err');
+  if (!strongPass(nw)) return toast('New password needs 8+ characters with a letter and a number', 'err');
+  if (nw !== nw2) return toast('The new passwords do not match', 'err');
+  st.salt = newSalt(); st.hash = await hashP(nw, st.salt); delete st.pass; st.mustChange = false;
+  save(); log('profile.password', st.email); toast('Password updated'); render();
+}
+
+/* ---------- Render and events ---------- */
+const VIEW_FN = {overview:viewOverview, users:viewUsers, txs:viewTxs, services:viewServices, network:viewNetwork,
+  support:viewSupport, announce:viewAnnounce, referrals:viewReferrals, reports:viewReports, audit:viewAudit, settings:viewSettings, integrations:viewIntegrations, brand:viewBrand, catalog:viewCatalog, staff:viewStaff, roles:viewRoles, profile:viewProfile};
+function renderNav(){
+  const groups = NAV_GROUPS.map(([g, keys]) => {
+    const ok = keys.filter(k => canView(k));
+    if (!ok.length) return '';
+    return `<div class="grp">${g}</div>` + ok.map(k => {
+      const v = VIEWS.find(x => x[0] === k);
+      return `<button class="nav ${VIEW===k?'on':''}" data-view="${k}" title="${v[1]}"><span class="ic">${v[2]}</span><span class="lbl">${v[1]}</span></button>`;
+    }).join('');
+  }).join('');
+  $('#nav').innerHTML = groups + `<button class="nav" data-act="logout" style="margin-top:12px"><span class="ic">⏻</span><span class="lbl">Log out</span></button>`;
+}
+function render(){
+  $('#shell').classList.toggle('collapsed', NAV_COLLAPSED);
+  const me = self();
+  if (!AUTH || !me) { AUTH = false; $('#login').hidden = false; $('#shell').hidden = true; return; }
+  $('#login').hidden = true; $('#shell').hidden = false;
+  if (!canView(VIEW)) VIEW = (VIEWS.find(v => canView(v[0])) || ['profile'])[0];
+  renderNav();
+  $('#vTitle').textContent = VIEWS.find(v => v[0] === VIEW)[1];
+  $('#view').innerHTML = VIEW_FN[VIEW]();
+  $('#maintBadge').textContent = DB.settings.maintenance ? 'Maintenance on' : 'Live';
+  $('#maintBadge').className = 'tag ' + (DB.settings.maintenance ? 't-warn' : 't-ok');
+  $('#whoami').textContent = me.name + ' · ' + ((roleOf(me) || {}).name || 'No role');
+}
+
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-act]');
+  if (a) { act(a.dataset.act, a); return; }
+  const n = e.target.closest('[data-view]');
+  if (n) { VIEW = n.dataset.view; closeDrawer(); render(); }
+});
+
+document.addEventListener('change', e => {
+  const el = e.target;
+  const NEED_EDIT = {plan:'pricing.edit', setting:'settings.edit', net:'network.edit', brand:'brand.edit', integ:'integrations.edit'};
+  if (el.dataset && el.dataset.field && NEED_EDIT[el.dataset.field] && !can(NEED_EDIT[el.dataset.field])) { toast('Your role cannot change this', 'err'); return render(); }
+  if (el.id === 'impFile') {
+    const f = el.files[0]; if (!f) return;
+    const r = new FileReader(); r.onload = () => { $('#impTxt').value = r.result; }; r.readAsText(f); return;
+  }
+  if (el.id === 'brandLogo') {
+    if (!can('brand.edit')) { toast('Your role cannot change the logo', 'err'); return render(); }
+    const f = el.files[0]; if (!f) return;
+    if (f.size > 300 * 1024) return toast('Logo must be under 300 KB', 'err');
+    const r = new FileReader();
+    r.onload = () => { DB.brand.logo = r.result; save(); log('brand.logo', 'uploaded'); toast('Logo updated'); render(); };
+    r.readAsDataURL(f); return;
+  }
+  if (el.id === 'restoreFile') {
+    if (!can('settings.edit')) { toast('Your role cannot restore backups', 'err'); return render(); }
+    const f = el.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const d = JSON.parse(r.result);
+        if (!d.users || !d.txs) throw new Error('bad backup');
+        DB = d; save(); log('data.restore', f.name); toast('Backup restored'); render();
+      } catch (err) { toast('That file is not a valid backup', 'err'); }
+    };
+    r.readAsText(f); return;
+  }
+  const f = el.dataset.field; if (!f) return;
+  const i = +el.dataset.i, k = el.dataset.k, val = el.value;
+  if (f === 'brand') { DB.brand[k] = val; save(); log('brand', k + ' changed'); toast('Brand saved'); return render(); }
+  if (f === 'integ') { const kind = el.dataset.kind; DB.integrations[kind][k] = val; save(); log('integration.settings', kind + '.' + k + ' changed'); return render(); }
+  if (f === 'uq') { UI.uq = val; return render(); }
+  if (f === 'tq') { UI.tq = val; return render(); }
+  if (f === 'plan') {
+    const p = DB.plans[i], n = +val;
+    if (!(n > 0)) { toast('Enter a valid amount', 'err'); return render(); }
+    p[k] = n; save(); log('service.plan', `${p.sz} ${k} → ${n}`);
+    if (p.cost > p.price) toast('Cost is higher than the price. Check the numbers.', 'err'); else toast('Saved');
+    return render();
+  }
+  if (f === 'setting') {
+    const n = (k === 'banner' || k === 'apiBase') ? val : +val;
+    DB.settings[k] = n; save(); log('setting', `${k} → ${n}`); toast('Saved'); return render();
+  }
+  if (f === 'net') {
+    const n = DB.networks[i]; n[k] = k === 'status' ? val : +val;
+    save(); log('network', `${n.name} ${k} → ${n[k]}`); toast('Saved'); return render();
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (!AUTH && e.key === 'Enter' && (e.target.id === 'lgEmail' || e.target.id === 'lgPass')) act('login', e.target);
+});
+
+render();
+ensureStaffHashes().then(() => render());
+</script>
+</body>
+</html>
